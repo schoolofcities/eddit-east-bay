@@ -1,4 +1,10 @@
-data/
+data/activity
+data/background
+data/business
+data/dewey_summary
+data/corridors/260526_report
+data/geo/Parcels_7711352183771741448
+data/summary
 
 # Svelte / SvelteKit
 .svelte-kit/
