@@ -7,11 +7,11 @@
  */
 
 const COLOURS = [
-    "#EAF0F8",
-    "#B8C8E3",
-    "#7E99C6",
-    "#4A679A",
-    "#1E3765"
+	"#EAF0F8",
+	"#B8C8E3",
+	"#7E99C6",
+	"#4A679A",
+	"#1E3765"
 ];
 
 
@@ -22,11 +22,9 @@ export const LAYER_GROUPS = [
 		exclusive: true,
 		ui: 'dropdown',
 		items: [
-			{ id: 'pop', label: 'Placeholder Label', key: 'pop', breaks: [1, 2, 3, 4], colors: COLOURS },
-			{ id: 'age', label: 'Placeholder Label', key: 'age', breaks: [1, 2, 3, 4], colors: COLOURS },
-			{ id: 'income', label: 'Placeholder Label', key: 'income', breaks: [1, 2, 3, 4], colors: COLOURS },
-			{ id: 'education', label: 'Placeholder Label', key: 'education', breaks: [1, 2, 3, 4], colors: COLOURS },
-			{ id: 'citizenship', label: 'Placeholder Label', key: 'citizenship', breaks: [1, 2, 3, 4], colors: COLOURS },
+			{ id: 'pop_density', label: 'Population Density', key: 'pop_density', breaks: [3053, 4850, 6737, 9102], colors: COLOURS },
+			{ id: 'pop_count', label: 'Population Count', key: 'population', breaks: [855, 1056, 1296, 1606], colors: COLOURS },
+			{ id: 'median_household_income', label: 'Median Household Income', key: 'median_household_income', breaks: [50072, 78269, 110872, 158710], colors: COLOURS },
 		],
 	}
 ];

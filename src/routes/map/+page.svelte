@@ -2,13 +2,14 @@
     import "../../assets/global-styles.css";
 
     import EastBayMap from "$lib/maps/EastBayMap.svelte";
-    import EastBayPanel from "$lib/maps/EastBayPanelBasic.svelte";
-    // import { makeInitialLayerState } from '$lib/maps/LayerConfig.js';
+    import EastBayPanel from "$lib/maps/EastBayPanel.svelte";
+
+    import { makeInitialLayerState } from "$lib/maps/LayerConfig.js";
     // import corridorPolygons from '$data/corridor-polygons.geo.json';
 
     let map = $state(null);
     // let selectedCorridorID = $state(null);
-    // let layerState = $state(makeInitialLayerState());
+    let layerState = $state(makeInitialLayerState());
 
     // const corridors = corridorPolygons.features
     //     .map((f) => ({
@@ -31,10 +32,6 @@
 </svelte:head>
 
 <div class="layout">
-    <div class="panel-wrap">
-        <EastBayPanel />
-    </div>
-
     <!-- <div class="panel-wrap">
         <EastBayPanel 
             bind:selectedCorridorID 
@@ -43,10 +40,6 @@
         />
     </div> -->
 
-    <div class="map-wrap">
-        <EastBayMap />
-    </div>
-
     <!-- <div class="map-wrap">
         <EastBayMap 
             bind:map 
@@ -54,6 +47,14 @@
             {layerState} 
             />
     </div> -->
+
+    <div class="panel-wrap">
+        <EastBayPanel bind:layerState />
+    </div>
+
+    <div class="map-wrap">
+        <EastBayMap {layerState} />
+    </div>
 </div>
 
 <style>

@@ -2,14 +2,14 @@
     import { LAYER_GROUPS } from "$lib/maps/LayerConfig.js";
 
     let {
-        selectedCorridorId = $bindable(null),
+        // selectedCorridorId = $bindable(null),
         layerState = $bindable({}),
-        corridors = [],
+        // corridors = [],
     } = $props();
 
-    const selectedCorridor = $derived(
-        corridors.find((v) => v.id === selectedCorridorId) ?? null,
-    );
+    // const selectedCorridor = $derived(
+    //     corridors.find((v) => v.id === selectedCorridorId) ?? null,
+    // );
 
     function setExclusive(groupId, itemId) {
         const current = layerState[groupId]?.activeId ?? null;
@@ -46,7 +46,7 @@
         </p>
 
         <div class="select-wrapper">
-            <select
+            <!-- <select
                 class="venue-select"
                 value={selectedCorridorId ?? ""}
                 onchange={(e) => {
@@ -62,11 +62,11 @@
                     <option value="" disabled>(Corridors not yet loaded)</option
                     >
                 {/if}
-            </select>
+            </select> -->
             <!-- Custom dropdown arrow -->
-            <svg class="select-arrow" viewBox="0 0 10 6" aria-hidden="true">
+            <!-- <svg class="select-arrow" viewBox="0 0 10 6" aria-hidden="true">
                 <path d="M0 0l5 6 5-6z" />
-            </svg>
+            </svg> -->
         </div>
     </section>
 
@@ -75,11 +75,11 @@
     <section class="panel-section">
         <h2 class="section-heading">Corridor Description</h2>
 
-        {#if selectedCorridor}
+        <!-- {#if selectedCorridor}
             <p class="cd-name">{selectedCorridor.name}</p>
-            <!-- <p class="cd-address">
+            <p class="cd-address">
                 {selectedCorridor.address}, Toronto, ON {selectedCorridor.postalCode}
-            </p> -->
+            </p>
             <p class="cd-body">
                 Corridor description coming soon. This section will include a
                 brief overview of the corridor, its history, community, and
@@ -90,7 +90,7 @@
                 Select a corridor above or click a marker on the map to view its
                 description.
             </p>
-        {/if}
+        {/if} -->
     </section>
 
     <div class="divider"></div>
@@ -192,11 +192,10 @@
     <!-- ── Corridor Profile ─────────────────────────────────────────────── -->
     <section class="panel-section">
         <h2 class="section-heading">Corridor Profile</h2>
-
+<!-- 
         {#if selectedVenue}
             <p class="corridor-name">{selectedCorridor.name}</p>
 
-            <!-- Stat cards placeholder — replace with real data -->
             <div class="stat-grid">
                 <div class="stat-card">
                     <span class="stat-label">Monthly Visitors</span>
@@ -220,7 +219,7 @@
                 Select a corridor above or click on the map to view its activity
                 and demographic profile.
             </p>
-        {/if}
+        {/if} -->
     </section>
 
     <div class="divider"></div>

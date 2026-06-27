@@ -2,19 +2,19 @@
     import { onMount } from "svelte";
     import maplibregl from "maplibre-gl";
     import "maplibre-gl/dist/maplibre-gl.css";
-    // import { LAYER_GROUPS } from "./LayerConfig.js";
-    // import eastBayBoundary from "$data/east-bay-boundary.geo.json";
+    import { LAYER_GROUPS } from "./LayerConfig.js";
+    // import oaklandBoundary from "$data/east-bay-boundary.geo.json";
     // import corridorCentroids from "$data/corridor-centroids.geo.json";
     // import corridorPolygons from "$data/corridor-polygons.geo.json";
-    // import eastBayCensus from "$data/east-bay-census.geo.json";
+    import oaklandCensus from "$data/oakland_BG.geo.json";
 
-    // let {
-    //     map = $bindable(null),
-    //     selectedCorridorId = $bindable(null),
-    //     layerState = {},
-    // } = $props();
+    let {
+        map = $bindable(null),
+        // selectedCorridorId = $bindable(null),
+        layerState = {},
+    } = $props();
 
-    let map;
+    // let map;
 
     const MAP_STYLE = "https://tiles.openfreemap.org/styles/positron";
 
@@ -23,12 +23,12 @@
     const MAP_MIN_ZOOM = 8.5;
     const MAP_MAX_ZOOM = 16;
     const MAP_MAX_BOUNDS = [
-    [-122.75496584469279, 37.34531008841303],
-    [-121.53979554723468, 38.25389877017857], 
+        [-122.75496584469279, 37.34531008841303],
+        [-121.53979554723468, 38.25389877017857],
     ];
 
     let mapContainer;
-    // let mapLoaded = $state(false);
+    let mapLoaded = $state(false);
 
     onMount(() => {
         map = new maplibregl.Map({
@@ -57,13 +57,13 @@
             "bottom-left",
         );
 
-        // map.on("load", () => {
-        //     mapLoaded = true;
-        //     addDemographyLayers();
-        //     addEastBayBoundary();
-        //     addCorridorMarkers();
-        //     syncLayers();
-        // });
+        map.on("load", () => {
+            mapLoaded = true;
+            addDemographyLayers();
+            // addOaklandBoundary();
+            // addCorridorMarkers();
+            syncLayers();
+        });
 
         const resizeObserver = new ResizeObserver(() => map?.resize());
         resizeObserver.observe(mapContainer);
@@ -74,12 +74,12 @@
         };
     });
 
-    // function addEastBayBoundary() {
+    // function addOaklandBoundary() {
     //     if (!map) return;
 
     //     map.addSource("east-bay-boundary", {
     //         type: "geojson",
-    //         data: eastBayBoundary,
+    //         data: oaklandBoundary,
     //     });
 
     //     map.addLayer({
@@ -227,75 +227,59 @@
     //     });
     // }
 
-    // function addDemographyLayers() {
-    //     if (!map) return;
+    function addDemographyLayers() {
+        if (!map) return;
 
-    //     map.addSource("east-bay-census", {
-    //         type: "geojson",
-    //         data: eastBayCensus,
-    //     });
+        map.addSource("east-bay-census", {
+            type: "geojson",
+            data: oaklandCensus,
+        });
 
-    //     const demographyGroup = LAYER_GROUPS[0];
+        const demographyGroup = LAYER_GROUPS[0];
 
-    //     for (const item of demographyGroup.items) {
-    //         const fillColor = [
-    //             "step",
-    //             ["get", item.key],
-    //             item.colors[0],
-    //             ...item.breaks.flatMap((b, i) => [b, item.colors[i + 1]]),
-    //         ];
+        for (const item of demographyGroup.items) {
+            const fillColor = [
+                "step",
+                ["get", item.key],
+                item.colors[0],
+                ...item.breaks.flatMap((b, i) => [b, item.colors[i + 1]]),
+            ];
 
-    //         map.addLayer({
-    //             id: item.id,
-    //             type: "fill",
-    //             source: "east-bay-census",
-    //             paint: {
-    //                 "fill-color": [
-    //                     "case",
-    //                     ["!=", ["get", item.key], null],
-    //                     fillColor,
-    //                     "#cbcbcb",
-    //                 ],
-    //                 "fill-opacity": 0.7,
-    //             },
-    //             layout: {
-    //                 visibility: "none",
-    //             },
-    //         });
-    //     }
-    // }
+            map.addLayer({
+                id: item.id,
+                type: "fill",
+                source: "east-bay-census",
+                paint: {
+                    "fill-color": [
+                        "case",
+                        ["!=", ["get", item.key], null],
+                        fillColor,
+                        "#cbcbcb",
+                    ],
+                    "fill-opacity":.7,
+                },
+                layout: {
+                    visibility: "none",
+                },
+            });
+        }
+    }
 
-    // function syncLayers() {
-    //     if (!map || !mapLoaded) return;
+function syncLayers() {
+    if (!map || !mapLoaded) return;
 
-    //     for (const group of LAYER_GROUPS) {
-    //         for (const item of group.items) {
-    //             const isVisible = group.exclusive
-    //                 ? layerState[group.id]?.activeId === item.id
-    //                 : (layerState[group.id]?.[item.id] ?? false);
+    for (const group of LAYER_GROUPS) {
+        for (const item of group.items) {
+            if (!map.getLayer(item.id)) continue;
 
-    //             // Always set visibility for known layers
-    //             const visibility = isVisible ? "visible" : "none";
+            const isVisible = group.exclusive
+                ? layerState[group.id]?.activeId === item.id
+                : (layerState[group.id]?.[item.id] ?? false);
 
-    //             // Placeholder census variables
-    //             switch (item.id) {
-    //                 case "pop":
-    //                 case "age":
-    //                 case "income":
-    //                 case "education":
-    //                 case "citizenship":
-    //                     if (map.getLayer(item.id)) {
-    //                         map.setLayoutProperty(
-    //                             item.id,
-    //                             "visibility",
-    //                             visibility,
-    //                         );
-    //                     }
-    //                     break;
-    //             }
-    //         }
-    //     }
-    // }
+            map.setLayoutProperty(item.id, "visibility", isVisible ? "visible" : "none");
+        }
+    }
+}
 
     // $effect(() => {
     //     if (!selectedCorridorId || !mapLoaded) return;
@@ -344,18 +328,18 @@
     //     }
     // });
 
-    // $effect(() => {
-    //     for (const group of LAYER_GROUPS) {
-    //         if (group.exclusive) {
-    //             void layerState[group.id]?.activeId;
-    //         } else {
-    //             for (const item of group.items) {
-    //                 void layerState[group.id]?.[item.id];
-    //             }
-    //         }
-    //     }
-    //     syncLayers();
-    // });
+    $effect(() => {
+        for (const group of LAYER_GROUPS) {
+            if (group.exclusive) {
+                void layerState[group.id]?.activeId;
+            } else {
+                for (const item of group.items) {
+                    void layerState[group.id]?.[item.id];
+                }
+            }
+        }
+        syncLayers();
+    });
 </script>
 
 <div bind:this={mapContainer} class="map-container"></div>
