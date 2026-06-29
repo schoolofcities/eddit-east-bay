@@ -22,11 +22,21 @@ export const LAYER_GROUPS = [
 		exclusive: true,
 		ui: 'dropdown',
 		items: [
-			{ id: 'pop_density', label: 'Population Density', key: 'pop_density', breaks: [3053, 4850, 6737, 9102], colors: COLOURS },
-			{ id: 'pop_count', label: 'Population Count', key: 'population', breaks: [855, 1056, 1296, 1606], colors: COLOURS },
-			{ id: 'median_household_income', label: 'Median Household Income', key: 'median_household_income', breaks: [50072, 78269, 110872, 158710], colors: COLOURS },
+			{ id: 'pop-density', label: 'Population Density', key: 'pop_density', breaks: [3053, 4850, 6737, 9102], colors: COLOURS },
+			{ id: 'pop-count', label: 'Population Count', key: 'population', breaks: [855, 1056, 1296, 1606], colors: COLOURS },
+			{ id: 'median-household-income', label: 'Median Household Income', key: 'median_household_income', breaks: [50072, 78269, 110872, 158710], colors: COLOURS },
 		],
-	}
+	},
+	{
+		id: 'mobility',
+		label: 'Mobility',
+		exclusive: false,
+		ui: 'toggles',
+		items: [
+			{ id: 'transit-rail', label: 'Rail', key: null },
+			{ id: 'transit-busses', label: 'Busses', key: null },
+		],
+	},
 ];
 
 export function makeInitialLayerState() {

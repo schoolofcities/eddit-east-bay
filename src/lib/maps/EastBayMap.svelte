@@ -7,6 +7,8 @@
     // import corridorCentroids from "$data/corridor-centroids.geo.json";
     // import corridorPolygons from "$data/corridor-polygons.geo.json";
     import oaklandCensus from "$data/oakland_BG.geo.json";
+    import mobilityLines from "$data/mobility_lines.geo.json";
+    import mobilityStops from "$data/mobility_stops.geo.json";
 
     let {
         map = $bindable(null),
@@ -60,6 +62,8 @@
         map.on("load", () => {
             mapLoaded = true;
             addDemographyLayers();
+            addTransitLines();
+            addTransitStops();
             // addOaklandBoundary();
             // addCorridorMarkers();
             syncLayers();
@@ -256,7 +260,7 @@
                         fillColor,
                         "#cbcbcb",
                     ],
-                    "fill-opacity":.7,
+                    "fill-opacity": 0.7,
                 },
                 layout: {
                     visibility: "none",
@@ -265,21 +269,112 @@
         }
     }
 
-function syncLayers() {
-    if (!map || !mapLoaded) return;
+    function addTransitLines() {
+        if (!map) return;
 
-    for (const group of LAYER_GROUPS) {
-        for (const item of group.items) {
-            if (!map.getLayer(item.id)) continue;
+        // Single source for all transit lines
+        map.addSource("mobility-lines", {
+            type: "geojson",
+            data: mobilityLines,
+        });
 
-            const isVisible = group.exclusive
-                ? layerState[group.id]?.activeId === item.id
-                : (layerState[group.id]?.[item.id] ?? false);
+        // Create a layer for each mode
+        const modes = [
+            { id: "transit-rail", mode: "rail", color: "#1E3765" },
+            { id: "transit-busses", mode: "bus", color: "#1E3765" },
+        ];
 
-            map.setLayoutProperty(item.id, "visibility", isVisible ? "visible" : "none");
+        for (const mode of modes) {
+            map.addLayer({
+                id: mode.id,
+                type: "line",
+                source: "mobility-lines",
+                filter: ["==", ["get", "mode"], mode.mode],
+                paint: {
+                    "line-color": mode.color,
+                    "line-width": 1.5,
+                    "line-opacity": 0.8,
+                    "line-dasharray": [2, 2],
+                },
+                layout: {
+                    visibility: "none",
+                },
+            });
         }
     }
-}
+
+    function addTransitStops() {
+        if (!map) return;
+
+        map.addSource("mobility-stops", {
+            type: "geojson",
+            data: mobilityStops,
+        });
+
+        map.addLayer({
+            id: "transit-rail-stops",
+            type: "circle",
+            source: "mobility-stops",
+            paint: {
+                "circle-radius": 3,
+                "circle-color": "#fff",
+                "circle-stroke-width": 1,
+                "circle-stroke-color": "#1E3765",
+            },
+            layout: {
+                visibility: "none",
+            },
+        });
+    }
+
+    function syncLayers() {
+        if (!map || !mapLoaded) return;
+
+        for (const group of LAYER_GROUPS) {
+            for (const item of group.items) {
+                const isVisible = group.exclusive
+                    ? layerState[group.id]?.activeId === item.id
+                    : (layerState[group.id]?.[item.id] ?? false);
+
+                // Always set visibility for known layers
+                const visibility = isVisible ? "visible" : "none";
+
+                switch (item.id) {
+                    // DEMOGRAPHY
+                    case "pop-density":
+                    case "pop-count":
+                    case "median-household-income":
+                        if (map.getLayer(item.id)) {
+                            map.setLayoutProperty(
+                                item.id,
+                                "visibility",
+                                visibility,
+                            );
+                        }
+                        break;
+                        
+                    // MOBILITY
+                    case "transit-rail":
+                    case "transit-busses":
+                        map.setLayoutProperty(
+                            item.id,
+                            "visibility",
+                            visibility,
+                        );
+
+                        if (item.id === "transit-rail") {
+                            map.setLayoutProperty(
+                                "transit-rail-stops",
+                                "visibility",
+                                visibility,
+                            );
+                        }
+
+                        break;
+                }
+            }
+        }
+    }
 
     // $effect(() => {
     //     if (!selectedCorridorId || !mapLoaded) return;

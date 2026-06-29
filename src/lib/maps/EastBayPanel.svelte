@@ -20,6 +20,11 @@
         layerState[groupId].activeId = value || null;
     }
 
+    	function toggleNonExclusive(groupId, itemId) {
+		if (itemId === 'commute-time' && !selectedVenueId) return;
+		layerState[groupId][itemId] = !layerState[groupId][itemId];
+	}
+
     function isOn(group, item) {
         if (group.exclusive) {
             return layerState[group.id]?.activeId === item.id;
@@ -182,6 +187,31 @@
                             </button>
                         {/each}
                     </div>
+                {:else}
+                    {#each group.items as item (item.id)}
+                        <label
+                            class="layer-toggle"
+                            class:layer-toggle-disabled={item.id ===
+                                "commute-time" && !selectedVenueId}
+                        >
+                            <span
+                                class="toggle-track"
+                                class:on={isOn(group, item)}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={isOn(group, item)}
+                                    onchange={() =>
+                                        toggleNonExclusive(group.id, item.id)}
+                                    class="sr-only"
+                                    disabled={item.id === "commute-time" &&
+                                        !selectedVenueId}
+                                />
+                                <span class="toggle-thumb"></span>
+                            </span>
+                            <span class="layer-label">{item.label}</span>
+                        </label>
+                    {/each}
                 {/if}
             </div>
         {/each}
@@ -192,7 +222,7 @@
     <!-- ── Corridor Profile ─────────────────────────────────────────────── -->
     <section class="panel-section">
         <h2 class="section-heading">Corridor Profile</h2>
-<!-- 
+        <!-- 
         {#if selectedVenue}
             <p class="corridor-name">{selectedCorridor.name}</p>
 
