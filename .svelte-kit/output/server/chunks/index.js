@@ -1,39 +1,5 @@
 import { clsx as clsx$1 } from "clsx";
 const DEV = false;
-var is_array = Array.isArray;
-var index_of = Array.prototype.indexOf;
-var array_from = Array.from;
-var define_property = Object.defineProperty;
-var get_descriptor = Object.getOwnPropertyDescriptor;
-var object_prototype = Object.prototype;
-var array_prototype = Array.prototype;
-var get_prototype_of = Object.getPrototypeOf;
-var is_extensible = Object.isExtensible;
-const noop = () => {
-};
-function run_all(arr) {
-  for (var i = 0; i < arr.length; i++) {
-    arr[i]();
-  }
-}
-function deferred() {
-  var resolve;
-  var reject;
-  var promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  return { promise, resolve, reject };
-}
-function fallback(value, fallback2, lazy = false) {
-  return value === void 0 ? lazy ? (
-    /** @type {() => V} */
-    fallback2()
-  ) : (
-    /** @type {V} */
-    fallback2
-  ) : value;
-}
 const DERIVED = 1 << 1;
 const EFFECT = 1 << 2;
 const BLOCK_EFFECT = 1 << 4;
@@ -107,10 +73,29 @@ function clsx(value) {
     return value ?? "";
   }
 }
+const whitespace = [..." 	\n\r\f \v\uFEFF"];
 function to_class(value, hash, directives) {
   var classname = value == null ? "" : "" + value;
   if (hash) {
     classname = classname ? classname + " " + hash : hash;
+  }
+  if (directives) {
+    for (var key in directives) {
+      if (directives[key]) {
+        classname = classname ? classname + " " + key : key;
+      } else if (classname.length) {
+        var len = key.length;
+        var a = 0;
+        while ((a = classname.indexOf(key, a)) >= 0) {
+          var b = a + len;
+          if ((a === 0 || whitespace.includes(classname[a - 1])) && (b === classname.length || whitespace.includes(classname[b]))) {
+            classname = (a === 0 ? "" : classname.substring(0, a)) + classname.substring(b + 1);
+          } else {
+            a = b;
+          }
+        }
+      }
+    }
   }
   return classname === "" ? null : classname;
 }
@@ -188,6 +173,24 @@ class Payload {
     this.head.uid = this.uid;
   }
 }
+function copy_payload({ out, css, head: head2, uid }) {
+  const payload = new Payload();
+  payload.out = out;
+  payload.css = new Set(css);
+  payload.uid = uid;
+  payload.head = new HeadPayload();
+  payload.head.out = head2.out;
+  payload.head.css = new Set(head2.css);
+  payload.head.title = head2.title;
+  payload.head.uid = head2.uid;
+  return payload;
+}
+function assign_payload(p1, p2) {
+  p1.out = p2.out;
+  p1.css = p2.css;
+  p1.head = p2.head;
+  p1.uid = p2.uid;
+}
 function props_id_generator(prefix) {
   let uid = 1;
   return () => `${prefix}s${uid++}`;
@@ -247,7 +250,7 @@ function stringify(value) {
   return typeof value === "string" ? value : value == null ? "" : value + "";
 }
 function attr_class(value, hash, directives) {
-  var result = to_class(value, hash);
+  var result = to_class(value, hash, directives);
   return result ? ` class="${escape_html(result, true)}"` : "";
 }
 function attr_style(value, directives) {
@@ -269,63 +272,56 @@ function ensure_array_like(array_like_or_iterator) {
   }
   return [];
 }
+function maybe_selected(payload, value) {
+  return value === payload.select_value ? " selected" : "";
+}
 export {
-  stringify as $,
   ASYNC as A,
   BOUNDARY_EFFECT as B,
   CLEAN as C,
   DERIVED as D,
   ERROR_VALUE as E,
-  STALE_REACTION as F,
-  EFFECT_TRANSPARENT as G,
+  DISCONNECTED as F,
+  REACTION_IS_UPDATING as G,
   HYDRATION_ERROR as H,
   INERT as I,
-  DISCONNECTED as J,
-  REACTION_IS_UPDATING as K,
-  index_of as L,
+  COMMENT_NODE as J,
+  HYDRATION_START as K,
+  HYDRATION_END as L,
   MAYBE_DIRTY as M,
-  COMMENT_NODE as N,
-  HYDRATION_START as O,
-  HYDRATION_END as P,
-  array_from as Q,
+  LEGACY_PROPS as N,
+  render as O,
+  setContext as P,
+  attr_style as Q,
   ROOT_EFFECT as R,
   STATE_SYMBOL as S,
-  LEGACY_PROPS as T,
+  stringify as T,
   UNOWNED as U,
-  render as V,
-  setContext as W,
-  fallback as X,
-  attr_style as Y,
-  attr as Z,
-  bind_props as _,
+  clsx as V,
   push as a,
-  ensure_array_like as a0,
-  attr_class as a1,
-  clsx as a2,
-  head as a3,
-  EFFECT_RAN as b,
-  EFFECT as c,
-  define_property as d,
+  bind_props as b,
+  ensure_array_like as c,
+  attr as d,
   escape_html as e,
-  BLOCK_EFFECT as f,
+  attr_class as f,
   getContext as g,
-  DEV as h,
-  deferred as i,
-  BRANCH_EFFECT as j,
-  DIRTY as k,
-  DESTROYED as l,
-  USER_EFFECT as m,
-  noop as n,
-  INSPECT_EFFECT as o,
+  copy_payload as h,
+  assign_payload as i,
+  head as j,
+  EFFECT_RAN as k,
+  EFFECT as l,
+  maybe_selected as m,
+  BLOCK_EFFECT as n,
+  DEV as o,
   pop as p,
-  object_prototype as q,
-  run_all as r,
-  array_prototype as s,
-  UNINITIALIZED as t,
-  get_descriptor as u,
-  get_prototype_of as v,
-  is_array as w,
-  is_extensible as x,
-  EFFECT_PRESERVED as y,
-  HEAD_EFFECT as z
+  BRANCH_EFFECT as q,
+  DIRTY as r,
+  DESTROYED as s,
+  USER_EFFECT as t,
+  INSPECT_EFFECT as u,
+  UNINITIALIZED as v,
+  EFFECT_PRESERVED as w,
+  HEAD_EFFECT as x,
+  STALE_REACTION as y,
+  EFFECT_TRANSPARENT as z
 };

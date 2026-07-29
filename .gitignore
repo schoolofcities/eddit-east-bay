@@ -6,6 +6,7 @@ data/corridors/260526_report
 data/geo/Parcels_7711352183771741448
 data/axle_summary
 data/census
+data/mobility
 
 # Svelte / SvelteKit
 .svelte-kit
@@ -36,3 +37,4 @@ npm-debug.log*
 
 # File types
 *.gpkg-*
+*.qmd
