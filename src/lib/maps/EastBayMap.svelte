@@ -9,6 +9,7 @@
 	import neighbourhoods from "../../data/OAK_neighborhoods.geo.json";
 	import neighbourhoodLabels from "../../data/OAK_neighborhood_labels.geo.json";
 	import councilDistricts from "../../data/OAK_council_districts.geo.json";
+	import districtMask from "../../data/OAK_district_mask.geo.json";
 
 	import districtLabels from "../../data/OAK_district_labels.geo.json";
 	// import oaklandCensus from "$data/oakland_BG.geo.json";
@@ -495,7 +496,7 @@
 			id: "ref-neighbourhoods-label",
 			type: "symbol",
 			source: "neighbourhoods-labels",
-			minzoom: 12,
+			minzoom: 11,
 			layout: {
 				"text-field": ["get", "name"],
 				"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
@@ -521,6 +522,22 @@
 	function addCouncilDistricts() {
 		if (!map) return;
 
+		map.addSource("district-mask", {
+			type: "geojson",
+			data: districtMask,
+		});
+
+		map.addLayer({
+			id: "ref-council-districts-mask",
+			type: "fill",
+			source: "district-mask",
+			paint: {
+				"fill-color": "#ffffff",
+				"fill-opacity": 0.6,
+			},
+			layout: { visibility: "none" },
+		});
+
 		map.addSource("council-districts", {
 			type: "geojson",
 			data: councilDistricts,
@@ -531,8 +548,8 @@
 			type: "line",
 			source: "council-districts",
 			paint: {
-				"line-color": "#888",
-				"line-width": 2,
+				"line-color": "darkgrey",
+				"line-width": 1.5,
 				"line-opacity": 1,
 			},
 			layout: { visibility: "none" },
@@ -741,6 +758,11 @@
 						if (map.getLayer("ref-council-districts")) {
 							map.setLayoutProperty(
 								"ref-council-districts",
+								"visibility",
+								visibility,
+							);
+							map.setLayoutProperty(
+								"ref-council-districts-mask",
 								"visibility",
 								visibility,
 							);
