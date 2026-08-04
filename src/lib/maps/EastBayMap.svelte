@@ -6,11 +6,12 @@
 	import bartLines from "../../data/BART-lines.geo.json";
 	import bartStops from "../../data/BART-stops.geo.json";
 	import boundaryMask from "../../data/OAK_boundary_mask.geo.json";
+	import neighbourhoods from "../../data/OAK_neighborhoods.geo.json";
+	import neighbourhoodLabels from "../../data/OAK_neighborhood_labels.geo.json";
+	import councilDistricts from "../../data/OAK_council_districts.geo.json";
+
+	import districtLabels from "../../data/OAK_district_labels.geo.json";
 	// import oaklandCensus from "$data/oakland_BG.geo.json";
-	// import neighbourhoods from "$data/oakland-neighbourhoods.geo.json";
-	// import neighbourhoodsLabels from "$data/oakland-neighbourhoods-labels.geo.json";
-	// import councilDistricts from "$data/oakland-council-districts.geo.json";
-	// import councilDistrictsLabels from "$data/oakland-council-districts-labels.geo.json";
 
 	import basemapLayers from "$lib/maps/neutral-grey.json";
 
@@ -81,8 +82,8 @@
 			addBoundaryMask();
 			// addDemographyLayers();
 			// addActivityLayers();
-			// addNeighbourhoods();
-			// addCouncilDistricts();
+			addNeighbourhoods();
+			addCouncilDistricts();
 			// addBids();
 			addBartLayers();
 			addCorridorBoundaries();
@@ -462,8 +463,9 @@
 	}
 	*/
 
-	/* Commented out — depends on neighbourhoods / neighbourhoodsLabels, which
-	   aren't imported yet.
+	// Neighborhood boundaries (../../data/OAK_neighborhoods.geo.json), bound
+	// to the "Neighborhoods" reference toggle. Just a thin black outline —
+	// no fill/labels for now since there's no separate label-point file.
 	function addNeighbourhoods() {
 		if (!map) return;
 
@@ -473,33 +475,12 @@
 		});
 
 		map.addLayer({
-			id: "ref-neighbourhoods-fill",
-			type: "fill",
-			source: "neighbourhoods",
-			filter: [
-				"in",
-				["geometry-type"],
-				["literal", ["Polygon", "MultiPolygon"]],
-			],
-			paint: {
-				"fill-color": "#000000",
-				"fill-opacity": 0,
-			},
-			layout: { visibility: "none" },
-		});
-
-		map.addLayer({
 			id: "ref-neighbourhoods",
 			type: "line",
 			source: "neighbourhoods",
-			filter: [
-				"in",
-				["geometry-type"],
-				["literal", ["LineString", "MultiLineString"]],
-			],
 			paint: {
-				"line-color": "#000000",
-				"line-width": 0.5,
+				"line-color": "#888",
+				"line-width": .6,
 				"line-opacity": 1,
 			},
 			layout: { visibility: "none" },
@@ -507,7 +488,7 @@
 
 		map.addSource("neighbourhoods-labels", {
 			type: "geojson",
-			data: neighbourhoodsLabels,
+			data: neighbourhoodLabels,
 		});
 
 		map.addLayer({
@@ -533,10 +514,10 @@
 			},
 		});
 	}
-	*/
 
-	/* Commented out — depends on councilDistricts / councilDistrictsLabels,
-	   which aren't imported yet.
+	// City Council District boundaries (../../data/OAK_council_districts.geo.json),
+	// bound to the "City Council Districts" reference toggle. Same treatment
+	// as neighborhoods — thin black outline, no fill/labels yet.
 	function addCouncilDistricts() {
 		if (!map) return;
 
@@ -546,33 +527,12 @@
 		});
 
 		map.addLayer({
-			id: "ref-council-districts-fill",
-			type: "fill",
-			source: "council-districts",
-			filter: [
-				"in",
-				["geometry-type"],
-				["literal", ["Polygon", "MultiPolygon"]],
-			],
-			paint: {
-				"fill-color": "#000000",
-				"fill-opacity": 0,
-			},
-			layout: { visibility: "none" },
-		});
-
-		map.addLayer({
 			id: "ref-council-districts",
 			type: "line",
 			source: "council-districts",
-			filter: [
-				"in",
-				["geometry-type"],
-				["literal", ["LineString", "MultiLineString"]],
-			],
 			paint: {
-				"line-color": "#000000",
-				"line-width": 0.5,
+				"line-color": "#888",
+				"line-width": .6,
 				"line-opacity": 1,
 			},
 			layout: { visibility: "none" },
@@ -580,24 +540,21 @@
 
 		map.addSource("council-districts-labels", {
 			type: "geojson",
-			data: councilDistrictsLabels,
+			data: districtLabels,
 		});
 
 		map.addLayer({
 			id: "ref-council-districts-label",
 			type: "symbol",
 			source: "council-districts-labels",
+			minzoom: 10,
 			layout: {
-				// Adjust to match the actual property name, e.g. "district" or
-				// "council_district" — placeholder assumes "district_name".
-				"text-field": ["get", "district_name"],
+				"text-field": ["get", "number"],
 				"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
-				"text-size": 11,
+				"text-size": 14,
 				"text-anchor": "center",
 				"text-transform": "uppercase",
 				"symbol-placement": "point",
-				"text-allow-overlap": false,
-				"text-ignore-placement": false,
 				visibility: "none",
 			},
 			paint: {
@@ -609,7 +566,6 @@
 			},
 		});
 	}
-	*/
 
 	/* Commented out — depends on bids / bidsLabels, which aren't imported yet.
 	function addBids() {
@@ -774,11 +730,6 @@
 								visibility,
 							);
 							map.setLayoutProperty(
-								"ref-neighbourhoods-fill",
-								"visibility",
-								visibility,
-							);
-							map.setLayoutProperty(
 								"ref-neighbourhoods-label",
 								"visibility",
 								visibility,
@@ -790,11 +741,6 @@
 						if (map.getLayer("ref-council-districts")) {
 							map.setLayoutProperty(
 								"ref-council-districts",
-								"visibility",
-								visibility,
-							);
-							map.setLayoutProperty(
-								"ref-council-districts-fill",
 								"visibility",
 								visibility,
 							);

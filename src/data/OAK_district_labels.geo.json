@@ -1,0 +1,14 @@
+{
+"type": "FeatureCollection",
+"name": "OAK_district_labels",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "objectid": "5", "id": "22", "name": "CCD2", "fullname": "COUNCIL DISTRICT 2", "dist_pole": 1059.5339496351833, "number": "2" }, "geometry": { "type": "Point", "coordinates": [ -122.243913744496794, 37.79638374462975 ] } },
+{ "type": "Feature", "properties": { "objectid": "6", "id": "3", "name": "CCD4", "fullname": "COUNCIL DISTRICT 4", "dist_pole": 1594.3940608035423, "number": "4" }, "geometry": { "type": "Point", "coordinates": [ -122.197262797384752, 37.805626830058927 ] } },
+{ "type": "Feature", "properties": { "objectid": "2", "id": "13", "name": "CCD7", "fullname": "COUNCIL DISTRICT 7", "dist_pole": 2643.4521494686242, "number": "7" }, "geometry": { "type": "Point", "coordinates": [ -122.201825083547391, 37.741713349539395 ] } },
+{ "type": "Feature", "properties": { "objectid": "3", "id": "11", "name": "CCD5", "fullname": "COUNCIL DISTRICT 5", "dist_pole": 1186.7055400356239, "number": "5" }, "geometry": { "type": "Point", "coordinates": [ -122.223592868775725, 37.778299870725583 ] } },
+{ "type": "Feature", "properties": { "objectid": "1", "id": "9", "name": "CCD3", "fullname": "COUNCIL DISTRICT 3", "dist_pole": 2197.6101465865158, "number": "3" }, "geometry": { "type": "Point", "coordinates": [ -122.320137360056194, 37.816210282775657 ] } },
+{ "type": "Feature", "properties": { "objectid": "7", "id": "31", "name": "CCD6", "fullname": "COUNCIL DISTRICT 6", "dist_pole": 1423.879918448614, "number": "6" }, "geometry": { "type": "Point", "coordinates": [ -122.17874295752209, 37.770977201052425 ] } },
+{ "type": "Feature", "properties": { "objectid": "4", "id": "15", "name": "CCD1", "fullname": "COUNCIL DISTRICT 1", "dist_pole": 1457.258743569402, "number": "1" }, "geometry": { "type": "Point", "coordinates": [ -122.256892622847928, 37.837897214996893 ] } }
+]
+}

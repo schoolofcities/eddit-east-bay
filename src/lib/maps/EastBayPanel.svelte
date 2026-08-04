@@ -88,7 +88,7 @@
 	<header class="panel-header">
 		<span class="header-org">School of Cities | City of Oakland</span>
 		<h1 class="header-title">
-			Equitable Development Data Insight Training (EDDIT)
+			Business Corridor & Mobility Map
 		</h1>
 		<p class="header-authors">Author One, Author Two &middot; 2026</p>
 	</header>
