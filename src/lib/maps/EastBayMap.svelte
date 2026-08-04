@@ -480,8 +480,8 @@
 			source: "neighbourhoods",
 			paint: {
 				"line-color": "#888",
-				"line-width": .6,
-				"line-opacity": 1,
+				"line-width": 1,
+				"line-opacity": 0,
 			},
 			layout: { visibility: "none" },
 		});
@@ -532,7 +532,7 @@
 			source: "council-districts",
 			paint: {
 				"line-color": "#888",
-				"line-width": .6,
+				"line-width": 2,
 				"line-opacity": 1,
 			},
 			layout: { visibility: "none" },
@@ -551,7 +551,7 @@
 			layout: {
 				"text-field": ["get", "number"],
 				"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
-				"text-size": 14,
+				"text-size": 16,
 				"text-anchor": "center",
 				"text-transform": "uppercase",
 				"symbol-placement": "point",
