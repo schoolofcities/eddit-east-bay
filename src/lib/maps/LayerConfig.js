@@ -1,33 +1,6 @@
-/**
- * Map layer catalog — City of Oakland / East Bay business corridors.
- *
- * Mirrors the structure of tacLayerConfig.js (Toronto Arts Council project),
- * swapped from "arts venue" to "business corridor" as the unit of analysis:
- *   - demography: ACS-style census indicators, shaded on Oakland block groups
- *   - activity: per-corridor home-origin visitor share (fetched at runtime,
- *     see EastBayMap.svelte's applyActivityFeatureState)
- *   - mobility: BART / AC Transit lines + stops
- *   - reference: neighbourhood, council district, and business-improvement-
- *     district boundaries
- *
- * NOTE: this is currently a barebones prototype. None of the $data files
- * these layers reference exist yet, so the corresponding code in
- * EastBayMap.svelte is commented out — this config is the source of truth
- * for what the panel UI *will* control once that data is wired in.
- *
- * group.exclusive: one active item at a time
- * group.ui: UI hint for panel rendering ('dropdown' | 'radio-toggles' | 'toggles')
- * item.key: data field (demography) or feature-state key (activity) —
- *   null for layers that aren't choropleths (transit, reference)
- *
- * NOTE ON BREAKS: the numeric breakpoints below are placeholders modeled on
- * plausible Oakland/Alameda County ACS ranges. Recompute actual quintile/
- * jenks breaks once real census extracts are wired in, the same way the
- * Toronto breaks were computed in analysis/*.ipynb.
- */
+import bidBoundaries from "../../data/OAK_BIDs.geo.json";
 
-// Brand ramp, anchored on the main brand green (rgb(44,104,61) / #2C683D)
-// at the dark end, stepping up through lighter tints for lower values.
+
 const COLOURS = [
 	"#EAF3EC",
 	"#B9D9C1",
@@ -66,12 +39,6 @@ export const LAYER_GROUPS = [
 		exclusive: true,
 		ui: "radio-toggles",
 		items: [
-			// `key` is the time_period field read out of each corridor's
-			// static/corridor_home_origin/corridor_<id>.json (via MapLibre
-			// feature-state, since the data is per-corridor and fetched at
-			// runtime — see EastBayMap.svelte). `breaks`/`colors` are placeholder
-			// quintile breakpoints; recompute once real visitation data lands,
-			// mirroring analysis/activity/interpolate_venue_activity_ct.ipynb.
 			{ id: "activity-all", label: "All", key: "all", breaks: [0.042, 0.106, 0.221, 0.565], colors: COLOURS },
 			{ id: "activity-evenings", label: "Evenings (5-11PM)", key: "evening", breaks: [0.044, 0.123, 0.293, 0.82], colors: COLOURS },
 			{ id: "activity-daytime", label: "Daytime (9AM-5PM)", key: "nine-five", breaks: [0.052, 0.146, 0.333, 0.938], colors: COLOURS },
@@ -85,8 +52,8 @@ export const LAYER_GROUPS = [
 		exclusive: false,
 		ui: "toggles",
 		items: [
-			{ id: "transit-rail", label: "BART", key: null },
-			{ id: "transit-busses", label: "AC Transit Bus", key: null },
+			{ id: "transit-rail", label: "Rail", key: null },
+			// { id: "transit-busses", label: "AC Transit Bus", key: null },
 		],
 	},
 	{
@@ -97,10 +64,19 @@ export const LAYER_GROUPS = [
 		items: [
 			{ id: "ref-neighbourhoods", label: "Neighborhoods", key: null },
 			{ id: "ref-council-districts", label: "City Council Districts", key: null },
-			{ id: "ref-bids", label: "Business Improvement Districts", key: null },
 		],
 	},
 ];
+
+
+export const CORRIDOR_BOUNDARIES = bidBoundaries;
+
+export const CORRIDORS = bidBoundaries.features
+	.map((feature) => ({
+		id: feature.properties.BID,
+		name: feature.properties.BID,
+	}))
+	.sort((a, b) => a.name.localeCompare(b.name));
 
 export function makeInitialLayerState() {
 	const state = {};

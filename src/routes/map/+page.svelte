@@ -4,19 +4,19 @@
     import EastBayMap from "$lib/maps/EastBayMap.svelte";
     import EastBayPanel from "$lib/maps/EastBayPanel.svelte";
 
-    import { makeInitialLayerState } from "$lib/maps/LayerConfig.js";
-    // import corridorPolygons from '$data/corridor-polygons.geo.json';
+    import { makeInitialLayerState } from "../../lib/maps/LayerConfig.js";
+    import corridorPolygons from '../../data/OAK_BIDs.geo.json';
 
     let map = $state(null);
-    // let selectedCorridorID = $state(null);
+    let selectedCorridorId = $state(null);
     let layerState = $state(makeInitialLayerState());
 
-    // const corridors = corridorPolygons.features
-    //     .map((f) => ({
-    //         id: String(f.properties.fid),
-    //         name: f.properties.corridor_name,
-    //     }))
-    //     .sort((a, b) => a.name.localeCompare(b.name));
+    const corridors = corridorPolygons.features
+        .map((f) => ({
+            id: String(f.properties.FID),
+            name: f.properties.BID,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
 <svelte:head>
@@ -32,28 +32,12 @@
 </svelte:head>
 
 <div class="layout">
-    <!-- <div class="panel-wrap">
-        <EastBayPanel 
-            bind:selectedCorridorID 
-            bind:layerState 
-            {corridors} 
-        />
-    </div> -->
-
-    <!-- <div class="map-wrap">
-        <EastBayMap 
-            bind:map 
-            bind:selectedCorridorID 
-            {layerState} 
-            />
-    </div> -->
-
     <div class="panel-wrap">
-        <EastBayPanel bind:layerState />
+        <EastBayPanel bind:selectedCorridorId bind:layerState />
     </div>
 
     <div class="map-wrap">
-        <EastBayMap {layerState} />
+        <EastBayMap bind:map bind:selectedCorridorId {layerState} />
     </div>
 </div>
 

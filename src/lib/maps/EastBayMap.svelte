@@ -2,25 +2,18 @@
 	import { onMount } from "svelte";
 	import maplibregl from "maplibre-gl";
 	import "maplibre-gl/dist/maplibre-gl.css";
-	import { LAYER_GROUPS } from "./LayerConfig.js";
-	// TODO: re-enable these once the corresponding files exist under $data.
-	// Commented out for now to avoid "Cannot find module" build errors.
-	// import corridorCentroids from "$data/corridor-centroids.geo.json";
-	// import corridorBoundaries from "$data/corridor-boundaries.geo.json";
+	import { LAYER_GROUPS, CORRIDOR_BOUNDARIES } from "./LayerConfig.js";
+	import bartLines from "../../data/BART-lines.geo.json";
+	import bartStops from "../../data/BART-stops.geo.json";
+	import boundaryMask from "../../data/OAK_boundary_mask.geo.json";
 	// import oaklandCensus from "$data/oakland_BG.geo.json";
-	// import mobilityLines from "$data/mobility_lines.geo.json";
-	// import mobilityStops from "$data/mobility_stops.geo.json";
 	// import neighbourhoods from "$data/oakland-neighbourhoods.geo.json";
 	// import neighbourhoodsLabels from "$data/oakland-neighbourhoods-labels.geo.json";
 	// import councilDistricts from "$data/oakland-council-districts.geo.json";
 	// import councilDistrictsLabels from "$data/oakland-council-districts-labels.geo.json";
-	// import bids from "$data/oakland-bids.geo.json";
-	// import bidsLabels from "$data/oakland-bids-labels.geo.json";
 
 	import basemapLayers from "$lib/maps/neutral-grey.json";
 
-	// Brand colors — main: rgb(44,104,61), accent: rgb(234,197,85).
-	// Used for corridor markers/boundaries, the selection highlight, and BIDs.
 	const OAK_GREEN = "#2C683D";
 	const OAK_ACCENT = "#EAC555";
 
@@ -43,12 +36,12 @@
 	};
 
 	const MAP_CENTER = [-122.28579885398307, 37.80632466850597];
-	const MAP_ZOOM = 9;
-	const MAP_MIN_ZOOM = 8.5;
+	const MAP_ZOOM = 11;
+	const MAP_MIN_ZOOM = 10;
 	const MAP_MAX_ZOOM = 16;
 	const MAP_MAX_BOUNDS = [
-		[-122.75496584469279, 37.34531008841303],
-		[-121.53979554723468, 38.25389877017857],
+		[-122.42344545726321, 37.68937245249528],
+		[-122.01839762270654, 37.95815075668805],
 	];
 
 	let mapContainer;
@@ -63,6 +56,8 @@
 			minZoom: MAP_MIN_ZOOM,
 			maxZoom: MAP_MAX_ZOOM,
 			maxBounds: MAP_MAX_BOUNDS,
+			pitch: 0,
+			maxPitch: 0,
 			attributionControl: false,
 		});
 
@@ -78,41 +73,23 @@
 			new maplibregl.AttributionControl({ compact: true }),
 			"bottom-left",
 		);
+		map.dragRotate.disable();
+		map.touchZoomRotate.disableRotation();
 
 		map.on("load", () => {
 			mapLoaded = true;
-			// Commented out until their $data imports above are restored.
+			addBoundaryMask();
 			// addDemographyLayers();
 			// addActivityLayers();
 			// addNeighbourhoods();
 			// addCouncilDistricts();
 			// addBids();
-			// addTransitLines();
-			// addTransitStops();
-			// addCorridorMarkers();
+			addBartLayers();
+			addCorridorBoundaries();
+			// map.getStyle()
+			// 	.layers.filter((layer) => layer.id.includes("name"))
+			// 	.forEach((layer) => map.moveLayer(layer.id));
 			syncLayers();
-
-			map.addLayer({
-				id: "3d-buildings",
-				source: "openmaptiles",
-				"source-layer": "building",
-				type: "fill-extrusion",
-				minzoom: 14,
-				paint: {
-					"fill-extrusion-color": "#ccc",
-					"fill-extrusion-height": [
-						"coalesce",
-						["get", "render_height"],
-						10,
-					],
-					"fill-extrusion-base": [
-						"coalesce",
-						["get", "render_min_height"],
-						0,
-					],
-					"fill-extrusion-opacity": 0.8,
-				},
-			});
 		});
 
 		const resizeObserver = new ResizeObserver(() => map?.resize());
@@ -124,30 +101,49 @@
 		};
 	});
 
-	/* Commented out — depends on corridorCentroids / corridorBoundaries,
-	   which aren't imported yet. Re-enable once those $data files exist.
-	function addCorridorMarkers() {
+	function addBoundaryMask() {
 		if (!map) return;
 
-		// ── Sources ────────────────────────────────────────────────────────
-		map.addSource("corridor-centroids", {
+		map.addSource("oak-boundary-mask", {
 			type: "geojson",
-			data: corridorCentroids,
-			promoteId: "fid",
+			data: boundaryMask,
 		});
 
-		map.addSource("corridor-boundaries", {
-			type: "geojson",
-			data: corridorBoundaries,
-			promoteId: "fid",
+		map.addLayer({
+			id: "oak-boundary-mask-fill",
+			type: "fill",
+			source: "oak-boundary-mask",
+			filter: ["==", ["get", "layer"], "Difference"],
+			paint: {
+				"fill-color": "#ffffff",
+				"fill-opacity": 0,
+			},
 		});
 
-		// ── Boundary layers (visible at zoom ≥ 15) ──────────────────────────
+		map.addLayer({
+			id: "oak-boundary-outline",
+			type: "line",
+			source: "oak-boundary-mask",
+			filter: ["==", ["get", "layer"], "OAK_Boundary"],
+			paint: {
+				"line-color": "grey",
+				"line-width": 0,
+			},
+		});
+	}
+
+	function addCorridorBoundaries() {
+		if (!map) return;
+
+		map.addSource("corridors", {
+			type: "geojson",
+			data: CORRIDOR_BOUNDARIES,
+		});
+
 		map.addLayer({
 			id: "corridor-fill",
 			type: "fill",
-			source: "corridor-boundaries",
-			minzoom: 15,
+			source: "corridors",
 			paint: {
 				"fill-color": OAK_GREEN,
 				"fill-opacity": 0.08,
@@ -157,8 +153,7 @@
 		map.addLayer({
 			id: "corridor-outline",
 			type: "line",
-			source: "corridor-boundaries",
-			minzoom: 15,
+			source: "corridors",
 			paint: {
 				"line-color": OAK_GREEN,
 				"line-width": 1.5,
@@ -166,56 +161,11 @@
 			},
 		});
 
-		// ── Centroid dot layers (always visible) ──────────────────────────
-		map.addLayer({
-			id: "corridor-halo",
-			type: "circle",
-			source: "corridor-centroids",
-			maxzoom: 15,
-			paint: {
-				"circle-radius": [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					10,
-					8,
-					15,
-					14,
-				],
-				"circle-color": "#ffffff",
-				"circle-opacity": 0.9,
-				"circle-stroke-width": 0,
-			},
-		});
-
-		map.addLayer({
-			id: "corridor-circle",
-			type: "circle",
-			source: "corridor-centroids",
-			maxzoom: 15,
-			paint: {
-				"circle-radius": [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					10,
-					5,
-					15,
-					10,
-				],
-				"circle-color": OAK_GREEN,
-				"circle-stroke-width": 1.5,
-				"circle-stroke-color": "#ffffff",
-			},
-		});
-
-		// ── Click handlers ────────────────────────────────────────────────
-		const handleCorridorClick = (e) => {
+		// ── Click to select ───────────────────────────────────────────────
+		map.on("click", "corridor-fill", (e) => {
 			const feature = e.features?.[0];
-			if (feature) selectedCorridorId = feature.properties.id;
-		};
-		map.on("click", "corridor-circle", handleCorridorClick);
-		map.on("click", "corridor-fill", handleCorridorClick);
+			if (feature) selectedCorridorId = feature.properties.BID;
+		});
 
 		// ── Hover popup (desktop / fine-pointer only) ─────────────────────
 		const supportsHover = window.matchMedia(
@@ -230,85 +180,82 @@
 				className: "corridor-hover-popup",
 			});
 
-			map.on("mouseenter", "corridor-circle", (e) => {
+			map.on("mousemove", "corridor-fill", (e) => {
 				map.getCanvas().style.cursor = "pointer";
 				const f = e.features[0];
 				hoverPopup
-					.setLngLat(f.geometry.coordinates)
-					.setHTML(`<span>${f.properties.name}</span>`)
+					.setLngLat(e.lngLat)
+					.setHTML(`<span>${f.properties.BID}</span>`)
 					.addTo(map);
 			});
-			map.on("mouseleave", "corridor-circle", () => {
+			map.on("mouseleave", "corridor-fill", () => {
 				map.getCanvas().style.cursor = "";
 				hoverPopup.remove();
 			});
 		} else {
-			map.on("mouseenter", "corridor-circle", () => {
+			map.on("mouseenter", "corridor-fill", () => {
 				map.getCanvas().style.cursor = "pointer";
 			});
-			map.on("mouseleave", "corridor-circle", () => {
+			map.on("mouseleave", "corridor-fill", () => {
 				map.getCanvas().style.cursor = "";
 			});
 		}
-
-		map.on("mouseenter", "corridor-fill", () => {
-			map.getCanvas().style.cursor = "pointer";
-		});
-		map.on("mouseleave", "corridor-fill", () => {
-			map.getCanvas().style.cursor = "";
-		});
 	}
-	*/
 
-	/* Commented out — depends on mobilityLines, which isn't imported yet.
-	function addTransitLines() {
+	function getCorridorCenter(feature) {
+		let minX = Infinity;
+		let minY = Infinity;
+		let maxX = -Infinity;
+		let maxY = -Infinity;
+
+		const visit = (coords) => {
+			if (typeof coords[0] === "number") {
+				const [x, y] = coords;
+				if (x < minX) minX = x;
+				if (x > maxX) maxX = x;
+				if (y < minY) minY = y;
+				if (y > maxY) maxY = y;
+				return;
+			}
+			for (const c of coords) visit(c);
+		};
+		visit(feature.geometry.coordinates);
+
+		return [(minX + maxX) / 2, (minY + maxY) / 2];
+	}
+
+	function addBartLayers() {
 		if (!map) return;
 
-		// Single source for all transit lines
-		map.addSource("mobility-lines", {
+		map.addSource("bart-lines", {
 			type: "geojson",
-			data: mobilityLines,
+			data: bartLines,
 		});
 
-		// Create a layer for each mode
-		const modes = [
-			{ id: "transit-rail", mode: "rail", color: OAK_GREEN }, // BART
-			{ id: "transit-busses", mode: "bus", color: OAK_GREEN }, // AC Transit
-		];
+		map.addLayer({
+			id: "transit-rail",
+			type: "line",
+			source: "bart-lines",
+			paint: {
+				"line-color": OAK_GREEN,
+				"line-width": 1.5,
+				"line-opacity": 0.8,
+				"line-dasharray": [2, 2],
+			},
+			layout: {
+				visibility: "none",
+			},
+		});
 
-		for (const mode of modes) {
-			map.addLayer({
-				id: mode.id,
-				type: "line",
-				source: "mobility-lines",
-				filter: ["==", ["get", "mode"], mode.mode],
-				paint: {
-					"line-color": mode.color,
-					"line-width": 1.5,
-					"line-opacity": 0.8,
-					"line-dasharray": [2, 2],
-				},
-				layout: {
-					visibility: "none",
-				},
-			});
-		}
-	}
-	*/
-
-	/* Commented out — depends on mobilityStops, which isn't imported yet.
-	function addTransitStops() {
-		if (!map) return;
-
-		map.addSource("mobility-stops", {
+		map.addSource("bart-stops", {
 			type: "geojson",
-			data: mobilityStops,
+			data: bartStops,
 		});
 
 		map.addLayer({
 			id: "transit-rail-stops",
 			type: "circle",
-			source: "mobility-stops",
+			source: "bart-stops",
 			paint: {
 				"circle-radius": 3,
 				"circle-color": "#fff",
@@ -320,7 +267,6 @@
 			},
 		});
 	}
-	*/
 
 	/* Commented out — this whole block depends on oaklandCensus, which isn't
 	   imported yet. Re-enable once $data/oakland_BG.geo.json exists.
@@ -793,16 +739,26 @@
 
 					// MOBILITY
 					case "transit-rail":
-					case "transit-busses":
-						map.setLayoutProperty(
-							item.id,
-							"visibility",
-							visibility,
-						);
-
-						if (item.id === "transit-rail") {
+						if (map.getLayer("transit-rail")) {
+							map.setLayoutProperty(
+								"transit-rail",
+								"visibility",
+								visibility,
+							);
+						}
+						if (map.getLayer("transit-rail-stops")) {
 							map.setLayoutProperty(
 								"transit-rail-stops",
+								"visibility",
+								visibility,
+							);
+						}
+						break;
+
+					case "transit-busses":
+						if (map.getLayer("transit-busses")) {
+							map.setLayoutProperty(
+								"transit-busses",
 								"visibility",
 								visibility,
 							);
@@ -874,40 +830,37 @@
 		}
 	}
 
-	/* Commented out — depends on corridorCentroids, which isn't imported yet.
+	// Ease the map to the selected corridor's center
 	$effect(() => {
 		if (!selectedCorridorId || !mapLoaded) return;
-		const feature = corridorCentroids.features.find(
-			(f) => f.properties.id === selectedCorridorId,
+		const feature = CORRIDOR_BOUNDARIES.features.find(
+			(f) => f.properties.BID === selectedCorridorId,
 		);
 		if (feature) {
 			map?.easeTo({
-				center: feature.geometry.coordinates,
-				zoom: 15,
+				center: getCorridorCenter(feature),
+				zoom: 14,
 				duration: 800,
 			});
 		}
 	});
-	*/
 
+	// Outline/highlight the selected corridor's boundary.
 	$effect(() => {
 		if (!mapLoaded) return;
 		const selected = selectedCorridorId ?? "";
 		const colorExpr = [
 			"case",
-			["==", ["get", "id"], selected],
+			["==", ["get", "BID"], selected],
 			"#DC4633",
 			OAK_GREEN,
 		];
 
-		if (map?.getLayer("corridor-circle")) {
-			map.setPaintProperty("corridor-circle", "circle-color", colorExpr);
-		}
 		if (map?.getLayer("corridor-fill")) {
 			map.setPaintProperty("corridor-fill", "fill-color", colorExpr);
 			map.setPaintProperty("corridor-fill", "fill-opacity", [
 				"case",
-				["==", ["get", "id"], selected],
+				["==", ["get", "BID"], selected],
 				0.2,
 				0.08,
 			]);
@@ -916,7 +869,7 @@
 			map.setPaintProperty("corridor-outline", "line-color", colorExpr);
 			map.setPaintProperty("corridor-outline", "line-width", [
 				"case",
-				["==", ["get", "id"], selected],
+				["==", ["get", "BID"], selected],
 				2.5,
 				1.5,
 			]);

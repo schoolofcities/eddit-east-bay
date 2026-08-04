@@ -1,10 +1,10 @@
 <script>
-	import { LAYER_GROUPS } from "./LayerConfig.js";
+	import { LAYER_GROUPS, CORRIDORS } from "./LayerConfig.js";
 
 	let {
 		selectedCorridorId = $bindable(null),
 		layerState = $bindable({}),
-		corridors = [],
+		corridors = CORRIDORS,
 	} = $props();
 
 	const selectedCorridor = $derived(
@@ -25,10 +25,7 @@
 		applyCrossGroupExclusion(groupId, next);
 	}
 
-	// Demography and Activity are two fill layers drawn on the same map
-	// surface — picking one clears the other so they never compete for the
-	// same visual space. "except" is the layer that was just activated and
-	// should be left alone.
+
 	function clearOtherExclusiveLayers(except) {
 		if (except !== "demography") layerState.demography.activeId = null;
 		if (except !== "activity") layerState.activity.activeId = null;
@@ -131,9 +128,7 @@
 	<section class="panel-section">
 		{#if selectedCorridor}
 			<p class="cd-name">{selectedCorridor.name}</p>
-			<p class="cd-address">
-				{selectedCorridor.address}, Oakland, CA {selectedCorridor.postalCode}
-			</p>
+			<p class="cd-address">Business Improvement District &middot; Oakland, CA</p>
 			<p class="cd-body">
 				{selectedCorridor.description || "Corridor description coming soon."}
 			</p>
