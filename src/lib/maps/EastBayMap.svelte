@@ -6,13 +6,12 @@
 	import bartLines from "../../data/BART-lines.geo.json";
 	import bartStops from "../../data/BART-stops.geo.json";
 	import boundaryMask from "../../data/OAK_boundary_mask.geo.json";
-	import neighbourhoods from "../../data/OAK_neighborhoods.geo.json";
 	import neighbourhoodLabels from "../../data/OAK_neighborhood_labels.geo.json";
 	import councilDistricts from "../../data/OAK_council_districts.geo.json";
 	import districtMask from "../../data/OAK_district_mask.geo.json";
 
 	import districtLabels from "../../data/OAK_district_labels.geo.json";
-	// import oaklandCensus from "$data/oakland_BG.geo.json";
+	import oaklandCensus from "../../data/OAK_BG.geo.json";
 
 	import basemapLayers from "$lib/maps/neutral-grey.json";
 
@@ -81,7 +80,7 @@
 		map.on("load", () => {
 			mapLoaded = true;
 			addBoundaryMask();
-			// addDemographyLayers();
+			addDemographyLayers();
 			// addActivityLayers();
 			addNeighbourhoods();
 			addCouncilDistricts();
@@ -270,9 +269,6 @@
 		});
 	}
 
-	/* Commented out — this whole block depends on oaklandCensus, which isn't
-	   imported yet. Re-enable once $data/oakland_BG.geo.json exists.
-
 	const FILL_OPACITY = 0.7;
 
 	function addDemographyLayers() {
@@ -283,8 +279,8 @@
 			data: oaklandCensus,
 			// Lets setFeatureState/removeFeatureState target block groups by id —
 			// used by the Activity layers below to attach per-corridor data
-			// without re-uploading the geometry. Adjust to match whatever unique
-			// id field is actually present on oakland_BG.geo.json (e.g. GEOID).
+			// without re-uploading the geometry. GEOID matches the field actually
+			// present on OAK_BG.geo.json.
 			promoteId: "GEOID",
 		});
 
@@ -316,7 +312,25 @@
 				},
 			});
 		}
+
+		// Thin block-group boundary, shown alongside whichever demography
+		// fill layer is currently active.
+		map.addLayer({
+			id: "census-outline",
+			type: "line",
+			source: "oakland-census",
+			paint: {
+				"line-color": "darkgrey",
+				"line-width": 0,
+			},
+			layout: {
+				visibility: "none",
+			},
+		});
 	}
+
+	/* Commented out — this block depends on per-corridor activity data, which
+	   isn't wired in yet. Re-enable once that data source exists.
 
 	// Activity layers share the same census polygons as demography, but the
 	// data behind them is per-corridor and fetched at runtime (see
@@ -464,28 +478,11 @@
 	}
 	*/
 
-	// Neighborhood boundaries (../../data/OAK_neighborhoods.geo.json), bound
-	// to the "Neighborhoods" reference toggle. Just a thin black outline —
-	// no fill/labels for now since there's no separate label-point file.
+	// Neighborhood labels (../../data/OAK_neighborhood_labels.geo.json). Always
+	// on as a base reference layer — no outline, just faint name labels that
+	// appear once you're zoomed in close enough to read them.
 	function addNeighbourhoods() {
 		if (!map) return;
-
-		map.addSource("neighbourhoods", {
-			type: "geojson",
-			data: neighbourhoods,
-		});
-
-		map.addLayer({
-			id: "ref-neighbourhoods",
-			type: "line",
-			source: "neighbourhoods",
-			paint: {
-				"line-color": "#888",
-				"line-width": 1,
-				"line-opacity": 0,
-			},
-			layout: { visibility: "none" },
-		});
 
 		map.addSource("neighbourhoods-labels", {
 			type: "geojson",
@@ -496,22 +493,22 @@
 			id: "ref-neighbourhoods-label",
 			type: "symbol",
 			source: "neighbourhoods-labels",
-			minzoom: 11,
+			minzoom: 12.5,
 			layout: {
 				"text-field": ["get", "name"],
 				"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
-				"text-size": 10,
+				"text-size": 10.5,
 				"text-anchor": "center",
 				"text-transform": "uppercase",
 				"symbol-placement": "point",
-				visibility: "none",
+				visibility: "visible",
 			},
 			paint: {
-				"text-color": "#636363",
+				"text-color": "black",
 				"text-halo-color": "#ffffff",
 				"text-halo-width": 1,
 				"text-halo-blur": 0,
-				"text-opacity": 1,
+				"text-opacity": 0.55,
 			},
 		});
 	}
@@ -671,21 +668,23 @@
 
 				switch (item.id) {
 					// DEMOGRAPHY
-					case "pop-density":
 					case "pop-count":
-					case "median-household-income":
-					case "median-age":
+					case "pop-density-sqmi":
+					case "total-households":
 					case "avg-household-size":
-					case "income-inequality":
-					case "pct-low-income":
-					case "pct-bachelors":
-					case "pct-no-highschool":
-					case "labour-creatives":
-					case "labour-independent-artists":
-					case "shelter-costs":
-					case "tenure-renter":
-					case "people-of-color":
-					case "pct-no-vehicle":
+					case "median-age":
+					case "median-household-income":
+					case "per-capita-income":
+					case "purchasing-power-index":
+					case "purchasing-power-density":
+					case "low-income-share":
+					case "median-home-value":
+					case "median-gross-rent":
+					case "renter-share":
+					case "total-housing-units":
+					case "median-year-built":
+					case "drive-alone-share":
+					case "active-transit-share":
 						if (map.getLayer(item.id)) {
 							map.setLayoutProperty(
 								item.id,
@@ -739,21 +738,6 @@
 						break;
 
 					// REFERENCE
-					case "ref-neighbourhoods":
-						if (map.getLayer("ref-neighbourhoods")) {
-							map.setLayoutProperty(
-								"ref-neighbourhoods",
-								"visibility",
-								visibility,
-							);
-							map.setLayoutProperty(
-								"ref-neighbourhoods-label",
-								"visibility",
-								visibility,
-							);
-						}
-						break;
-
 					case "ref-council-districts":
 						if (map.getLayer("ref-council-districts")) {
 							map.setLayoutProperty(
@@ -795,6 +779,15 @@
 						break;
 				}
 			}
+		}
+
+		// Outline follows the demography group as a whole, not any single item.
+		if (map.getLayer("census-outline")) {
+			map.setLayoutProperty(
+				"census-outline",
+				"visibility",
+				layerState.demography?.activeId ? "visible" : "none",
+			);
 		}
 	}
 
