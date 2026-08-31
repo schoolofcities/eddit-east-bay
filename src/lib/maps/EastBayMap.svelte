@@ -2,9 +2,16 @@
 	import { onMount } from "svelte";
 	import maplibregl from "maplibre-gl";
 	import "maplibre-gl/dist/maplibre-gl.css";
-	import { LAYER_GROUPS, CORRIDOR_BOUNDARIES } from "./LayerConfig.js";
+	import {
+		LAYER_GROUPS,
+		CORRIDOR_BOUNDARIES,
+		CATCHMENT_BOUNDARIES,
+		CATCHMENT_STYLE,
+		getCatchmentFeature,
+	} from "./LayerConfig.js";
 	import bartLines from "../../data/BART-lines.geo.json";
 	import bartStops from "../../data/BART-stops.geo.json";
+	import bartStopsBuffer from "../../data/BART-stops-buffer.geo.json";
 	import boundaryMask from "../../data/OAK_boundary_mask.geo.json";
 	import neighbourhoodLabels from "../../data/OAK_neighborhood_labels.geo.json";
 	import councilDistricts from "../../data/OAK_council_districts.geo.json";
@@ -87,6 +94,7 @@
 			// addBids();
 			addBartLayers();
 			addCorridorBoundaries();
+			addCatchmentAreas();
 			// map.getStyle()
 			// 	.layers.filter((layer) => layer.id.includes("name"))
 			// 	.forEach((layer) => map.moveLayer(layer.id));
@@ -203,6 +211,49 @@
 		}
 	}
 
+	// Catchment-area polygons (../../data/OAK_catchment_area.geo.json), one per
+	// corridor and joined to it by FID. Starts hidden with no filter — the
+	// $effect below shows just the selected corridor's own polygon, filtered
+	// by FID, once one is selected. Inserted with a beforeId of "corridor-fill"
+	// so it sits below the OAK_BID layer regardless of call order.
+	function addCatchmentAreas() {
+		if (!map) return;
+
+		map.addSource("oak-catchment", {
+			type: "geojson",
+			data: CATCHMENT_BOUNDARIES,
+		});
+
+		map.addLayer(
+			{
+				id: "catchment-fill",
+				type: "fill",
+				source: "oak-catchment",
+				paint: {
+					"fill-color": CATCHMENT_STYLE.fillColor,
+					"fill-opacity": CATCHMENT_STYLE.fillOpacity,
+				},
+				layout: { visibility: "none" },
+			},
+			"corridor-fill",
+		);
+
+		map.addLayer(
+			{
+				id: "catchment-outline",
+				type: "line",
+				source: "oak-catchment",
+				paint: {
+					"line-color": CATCHMENT_STYLE.outlineColor,
+					"line-width": CATCHMENT_STYLE.outlineWidth,
+					"line-opacity": 0.85,
+				},
+				layout: { visibility: "none" },
+			},
+			"corridor-fill",
+		);
+	}
+
 	function getCorridorCenter(feature) {
 		let minX = Infinity;
 		let minY = Infinity;
@@ -228,6 +279,29 @@
 	function addBartLayers() {
 		if (!map) return;
 
+		// Station-buffer polygons (../../data/BART-stops-buffer.geo.json) — shown
+		// as a dashed outline only (no fill), toggled together with the rest of
+		// the Rail layer. Added first so it sits below the lines/stops/labels.
+		map.addSource("bart-stops-buffer", {
+			type: "geojson",
+			data: bartStopsBuffer,
+		});
+
+		map.addLayer({
+			id: "transit-rail-buffer",
+			type: "line",
+			source: "bart-stops-buffer",
+			paint: {
+				"line-color": OAK_GREEN,
+				"line-width": 1,
+				"line-opacity": 0.6,
+				"line-dasharray": [2, 2],
+			},
+			layout: {
+				visibility: "none",
+			},
+		});
+
 		map.addSource("bart-lines", {
 			type: "geojson",
 			data: bartLines,
@@ -241,7 +315,6 @@
 				"line-color": OAK_GREEN,
 				"line-width": 1.5,
 				"line-opacity": 0.8,
-				"line-dasharray": [2, 2],
 			},
 			layout: {
 				visibility: "none",
@@ -265,6 +338,33 @@
 			},
 			layout: {
 				visibility: "none",
+			},
+		});
+
+		// Station-name labels, offset above the stop marker.
+		map.addLayer({
+			id: "transit-rail-stops-label",
+			type: "symbol",
+			source: "bart-stops",
+			minzoom: 11,
+			layout: {
+				"text-field": ["get", "stop_name"],
+				"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
+				"text-size": 11,
+				"text-transform": "uppercase",
+				"text-anchor": "left",
+				"text-offset": [0.6, 0],
+				"symbol-placement": "point",
+				"text-allow-overlap": false,
+				"text-ignore-placement": false,
+				visibility: "none",
+			},
+			paint: {
+				"text-color": OAK_GREEN,
+				"text-halo-color": "#ffffff",
+				"text-halo-width": 1,
+				"text-halo-blur": 0,
+				"text-opacity": 1,
 			},
 		});
 	}
@@ -493,22 +593,22 @@
 			id: "ref-neighbourhoods-label",
 			type: "symbol",
 			source: "neighbourhoods-labels",
-			minzoom: 12.5,
+			minzoom: 13.5,
 			layout: {
 				"text-field": ["get", "name"],
 				"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
-				"text-size": 10.5,
+				"text-size": 9.5,
 				"text-anchor": "center",
 				"text-transform": "uppercase",
 				"symbol-placement": "point",
 				visibility: "visible",
 			},
 			paint: {
-				"text-color": "black",
+				"text-color": "grey",
 				"text-halo-color": "#ffffff",
 				"text-halo-width": 1,
 				"text-halo-blur": 0,
-				"text-opacity": 0.55,
+				"text-opacity": 1,
 			},
 		});
 	}
@@ -725,6 +825,20 @@
 								visibility,
 							);
 						}
+						if (map.getLayer("transit-rail-stops-label")) {
+							map.setLayoutProperty(
+								"transit-rail-stops-label",
+								"visibility",
+								visibility,
+							);
+						}
+						if (map.getLayer("transit-rail-buffer")) {
+							map.setLayoutProperty(
+								"transit-rail-buffer",
+								"visibility",
+								visibility,
+							);
+						}
 						break;
 
 					case "transit-busses":
@@ -806,6 +920,24 @@
 		}
 	});
 
+	// Catchment-area underlay only ever shows the selected corridor's own
+	// polygon (filtered by FID) — hidden entirely when nothing is selected.
+	$effect(() => {
+		if (!mapLoaded) return;
+		const feature = getCatchmentFeature(selectedCorridorId);
+		const visibility = feature ? "visible" : "none";
+		const filter = feature
+			? ["==", ["get", "FID"], feature.properties.FID]
+			: null;
+
+		for (const layerId of ["catchment-fill", "catchment-outline"]) {
+			if (map?.getLayer(layerId)) {
+				map.setLayoutProperty(layerId, "visibility", visibility);
+				map.setFilter(layerId, filter);
+			}
+		}
+	});
+
 	// Outline/highlight the selected corridor's boundary.
 	$effect(() => {
 		if (!mapLoaded) return;
@@ -831,8 +963,8 @@
 			map.setPaintProperty("corridor-outline", "line-width", [
 				"case",
 				["==", ["get", "BID"], selected],
-				2.5,
-				1.5,
+				2,
+				1,
 			]);
 		}
 	});
