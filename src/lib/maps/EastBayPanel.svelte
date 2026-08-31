@@ -164,7 +164,8 @@
 	</section>
 
 	<div class="divider"></div>
-	<!-- ── Corridor Description ──────────────────────────────────────────── -->
+
+	<!-- ── Corridor Profile ─────────────────────────────────────────────── -->
 	<section class="panel-section">
 		{#if selectedCorridor}
 			<p class="cd-name">{selectedCorridor.name}</p>
@@ -172,11 +173,134 @@
 			<p class="cd-body">
 				{selectedCorridor.description || "Corridor description coming soon."}
 			</p>
+
+			<div class="stat-grid">
+				<div class="stat-card">
+					<span class="stat-label">Monthly Foot Traffic</span>
+					<span class="stat-value placeholder">—</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-label">Catchment Radius</span>
+					<span class="stat-value placeholder">—</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-label">Equity Index</span>
+					<span class="stat-value placeholder">—</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-label">Transit Access</span>
+					<span class="stat-value placeholder">—</span>
+				</div>
+			</div>
 		{:else}
 			<p class="empty-state">
-				Select a corridor above or click a marker on the map to view its
-				description.
+				Select a corridor above or click on the map to view its
+				activity and demographic profile.
 			</p>
+		{/if}
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- ── Business Profile ──────────────────────────────────────────────── -->
+	<section class="panel-section">
+		<h2 class="section-heading">Business Profile</h2>
+
+		{#if selectedCorridor}
+			<table class="catchment-table">
+				<tbody>
+					<tr>
+						<td class="catchment-label">Business Gain</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+					<tr>
+						<td class="catchment-label">Business Loss</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+					<tr>
+						<td class="catchment-label">Business Turnover</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<p class="subsection-label">Business Composition</p>
+			<table class="catchment-table">
+				<tbody>
+					<tr>
+						<td class="catchment-label">Business Type A</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+					<tr>
+						<td class="catchment-label">Business Type B</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+					<tr>
+						<td class="catchment-label">Business Type C</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+					<tr>
+						<td class="catchment-label">Business Type D</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+					<tr>
+						<td class="catchment-label">Other</td>
+						<td class="catchment-value">—%</td>
+					</tr>
+				</tbody>
+			</table>
+		{:else}
+			<p class="empty-state">
+				Select a corridor above or click on the map to view its
+				business profile.
+			</p>
+		{/if}
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- ── Catchment Area Profile ────────────────────────────────────────── -->
+	<section class="panel-section">
+		<h2 class="section-heading">Catchment Area Profile</h2>
+
+		{#if !selectedCorridor}
+			<p class="empty-state">
+				Select a corridor above to view its catchment area's
+				demographic profile.
+			</p>
+		{:else if !catchmentFeature}
+			<p class="empty-state">
+				No catchment area data found for this corridor.
+			</p>
+		{:else}
+			<div class="catchment-legend">
+				<span
+					class="catchment-swatch"
+					style={`border-color: ${CATCHMENT_STYLE.outlineColor};`}
+				>
+					<span
+						class="catchment-swatch-fill"
+						style={`background: ${CATCHMENT_STYLE.fillColor}; opacity: ${CATCHMENT_STYLE.fillOpacity};`}
+					></span>
+				</span>
+				<span class="catchment-legend-label">Catchment area boundary</span>
+			</div>
+
+			<table class="catchment-table">
+				<tbody>
+					{#each DEMOGRAPHY_ITEMS as item (item.id)}
+						<tr>
+							<td class="catchment-label">{item.label}</td>
+							<td class="catchment-value">
+								{formatDemographyValue(
+									item,
+									catchmentFeature.properties[item.key],
+								)}
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		{/if}
 	</section>
 
@@ -186,6 +310,7 @@
 		<h2 class="section-heading">Map Layers</h2>
 
 		{#each LAYER_GROUPS as group (group.id)}
+			{#if group.id !== "demography"}
 			<div class="layer-group">
 				<span class="layer-group-label">{group.label}</span>
 
@@ -288,89 +413,8 @@
 					{/each}
 				{/if}
 			</div>
+			{/if}
 		{/each}
-	</section>
-
-	<div class="divider"></div>
-
-	<!-- ── Corridor Profile ─────────────────────────────────────────────── -->
-	<section class="panel-section">
-		<h2 class="section-heading">Corridor Profile</h2>
-
-		{#if selectedCorridor}
-			<p class="corridor-name">{selectedCorridor.name}</p>
-
-			<div class="stat-grid">
-				<div class="stat-card">
-					<span class="stat-label">Monthly Foot Traffic</span>
-					<span class="stat-value placeholder">—</span>
-				</div>
-				<div class="stat-card">
-					<span class="stat-label">Catchment Radius</span>
-					<span class="stat-value placeholder">—</span>
-				</div>
-				<div class="stat-card">
-					<span class="stat-label">Equity Index</span>
-					<span class="stat-value placeholder">—</span>
-				</div>
-				<div class="stat-card">
-					<span class="stat-label">Transit Access</span>
-					<span class="stat-value placeholder">—</span>
-				</div>
-			</div>
-		{:else}
-			<p class="empty-state">
-				Select a corridor above or click on the map to view its
-				activity and demographic profile.
-			</p>
-		{/if}
-	</section>
-
-	<div class="divider"></div>
-
-	<!-- ── Catchment Area Profile ────────────────────────────────────────── -->
-	<section class="panel-section">
-		<h2 class="section-heading">Catchment Area Profile</h2>
-
-		{#if !selectedCorridor}
-			<p class="empty-state">
-				Select a corridor above to view its catchment area's
-				demographic profile.
-			</p>
-		{:else if !catchmentFeature}
-			<p class="empty-state">
-				No catchment area data found for this corridor.
-			</p>
-		{:else}
-			<div class="catchment-legend">
-				<span
-					class="catchment-swatch"
-					style={`border-color: ${CATCHMENT_STYLE.outlineColor};`}
-				>
-					<span
-						class="catchment-swatch-fill"
-						style={`background: ${CATCHMENT_STYLE.fillColor}; opacity: ${CATCHMENT_STYLE.fillOpacity};`}
-					></span>
-				</span>
-				<span class="catchment-legend-label">Catchment area boundary</span>
-			</div>
-
-			<table class="catchment-table">
-				<tbody>
-					{#each DEMOGRAPHY_ITEMS as item (item.id)}
-						<tr>
-							<td class="catchment-label">{item.label}</td>
-							<td class="catchment-value">
-								{formatDemographyValue(
-									item,
-									catchmentFeature.properties[item.key],
-								)}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		{/if}
 	</section>
 </aside>
 
@@ -671,14 +715,6 @@
 
 	/* ── Corridor Profile ──────────────────────────────────────────────── */
 
-	.corridor-name {
-		font-family: "Public Sans", sans-serif;
-		font-weight: 700;
-		font-size: 0.88rem;
-		color: var(--oak-green-dark);
-		margin: 0 0 10px;
-	}
-
 	.stat-grid {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -742,6 +778,16 @@
 	.catchment-legend-label {
 		font-size: 0.72rem;
 		color: var(--brandGray60);
+	}
+
+	.subsection-label {
+		font-family: "Public Sans", sans-serif;
+		margin: 0.75rem 0 0.35rem;
+		font-size: 0.72rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+		color: var(--oak-green);
 	}
 
 	.catchment-table {

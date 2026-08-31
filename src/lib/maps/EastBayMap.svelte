@@ -630,7 +630,7 @@
 			source: "district-mask",
 			paint: {
 				"fill-color": "#ffffff",
-				"fill-opacity": 0.6,
+				"fill-opacity": 0,
 			},
 			layout: { visibility: "none" },
 		});
@@ -645,8 +645,8 @@
 			type: "line",
 			source: "council-districts",
 			paint: {
-				"line-color": "darkgrey",
-				"line-width": 1.5,
+				"line-color": "black",
+				"line-width": 1,
 				"line-opacity": 1,
 			},
 			layout: { visibility: "none" },
