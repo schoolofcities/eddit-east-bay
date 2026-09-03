@@ -61,8 +61,8 @@
     },
     "paint": {
       "fill-antialias": true,
-      "fill-color": "rgba(215,215, 215, 1)",
-      "fill-outline-color": "rgba(177, 177, 177, 0.3)"
+      "fill-color": "rgba(220,220,220, 1)",
+      "fill-outline-color": "rgba(177, 177, 177, 1)"
     }
   },
   {
@@ -82,7 +82,7 @@
     },
     "paint": {
       "line-color": "#b3b3b3",
-      "line-width": 0,
+      "line-width": 1,
       "line-opacity": 0
     }
   },
@@ -303,8 +303,8 @@
     "minzoom": 13,
     "paint": {
       "fill-antialias": true,
-      "fill-color": "rgba(255, 255, 255, 1)",
-      "fill-outline-color": "rgba(208, 208, 208, .7)"
+      "fill-color": "rgba(255, 255, 255, 0)",
+      "fill-outline-color": "rgba(208, 208, 208, 0)"
     },
     "layout": {
       "visibility": "visible"

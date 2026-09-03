@@ -1,4 +1,5 @@
 import bidBoundaries from "../../data/OAK_BIDs.geo.json";
+import catchmentBoundaries from "../../data/OAK_catchment_area.geo.json";
 
 
 const COLOURS = [
@@ -87,6 +88,42 @@ export const CORRIDORS = bidBoundaries.features
 		name: feature.properties.BID,
 	}))
 	.sort((a, b) => a.name.localeCompare(b.name));
+
+// Catchment-area polygons — one per corridor, carrying the same demographic
+// fields (pop_density_sqmi, median_household_income, etc.) as the demography
+// layer above. Matched to a corridor by FID, same as OAK_BIDs.geo.json.
+export const CATCHMENT_BOUNDARIES = catchmentBoundaries;
+
+// Shared styling for the catchment-area underlay, so the map's fill/outline
+// and the panel's legend swatch always describe the same color.
+export const CATCHMENT_STYLE = {
+	fillColor: "#87BE96",
+	fillOpacity: 0.2,
+	outlineColor: "#2F4B61",
+	outlineWidth: 0,
+};
+
+// Shared lookup so the map (for the fill layer) and the panel (for the
+// tabular profile) agree on exactly how a corridor maps to its catchment
+// feature. selectedCorridorId is a BID (that's what the map's click handler
+// and CORRIDORS above key on), but OAK_catchment_area.geo.json is joined to
+// OAK_BIDs.geo.json by FID — so this first resolves the corridor's own FID
+// from OAK_BIDs, then matches that FID against the catchment file.
+export function getCatchmentFeature(corridorId) {
+	if (!corridorId) return null;
+
+	const corridorFeature = CORRIDOR_BOUNDARIES.features.find(
+		(feature) => feature.properties.BID === corridorId,
+	);
+	if (!corridorFeature) return null;
+
+	const fid = corridorFeature.properties.FID;
+	return (
+		CATCHMENT_BOUNDARIES.features.find(
+			(feature) => String(feature.properties.FID) === String(fid),
+		) ?? null
+	);
+}
 
 export function makeInitialLayerState() {
 	const state = {};
