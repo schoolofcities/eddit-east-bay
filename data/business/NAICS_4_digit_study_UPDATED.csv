@@ -1,0 +1,44 @@
+Digit NAIC,Industry Group,Category
+4421,Furniture Stores,Non-essential retail
+4422,Home Furnishings Stores,Non-essential retail
+4481,Clothing Stores,Non-essential retail
+4482,Shoe Stores,Non-essential retail
+4483,"Jewelry, Luggage, and Leather Goods Stores",Non-essential retail
+4511,"Sporting Goods, Hobby, and Musical Instrument Stores",Non-essential retail
+4512,"Book, Periodical, and Music Stores",Non-essential retail
+4522,Department Stores,Non-essential retail
+4523,Other General Merchandise Stores,Non-essential retail
+4531,Florists,Non-essential retail
+4532,"Office Supplies, Stationery, and Gift Stores",Non-essential retail
+4533,Used Merchandise Stores,Non-essential retail
+4539,Other Miscellaneous Store Retailers,Non-essential retail
+7223,Special Food Services,Food and beverage services
+7224,Drinking Places (Alcoholic Beverages),Food and beverage services
+7225,Restaurants and Other Eating Places,Food and beverage services
+8121,Personal Care Services,Personal Services
+8123,Drycleaning and Laundry Services,Personal Services
+8129,Other Personal Services,Personal Services
+7111,Performing Arts Companies,Arts/Accomodation
+7112,Spectator Sports,Arts/Accomodation
+7113,"Promoters of Performing Arts, Sports, and Similar Events",Arts/Accomodation
+7114,"Agents and Managers for Artists, Athletes, Entertainers, and Other Public Figures",Arts/Accomodation
+7115,"Independent Artists, Writers, and Performers",Arts/Accomodation
+7121,"Museums, Historical Sites, and Similar Institutions",Arts/Accomodation
+7211,Traveler Accommodation,Arts/Accomodation
+7212,RV (Recreational Vehicle) Parks and Recreational Camps,Arts/Accomodation
+7213,Rooming and Boarding Houses,Arts/Accomodation
+4411,Automobile Dealers,Essential Retail
+4412,Other Motor Vehicle Dealers,Essential Retail
+4413,"Automotive Parts, Accessories, and Tire Stores",Essential Retail
+4431,Electronics & Appliance Stores,Essential Retail
+4441,Building Material and Supplies Dealers,Essential Retail
+4442,Lawn and Garden Equipment and Supplies Stores,Essential Retail
+4451,Grocery Stores,Essential Retail
+4452,Specialty Food Stores,Essential Retail
+4453,"Beer, Wine, and Liquor Stores",Essential Retail
+4461,Health & Personal Care Stores,Essential Retail
+4471,Gasoline Stations,Essential Retail
+4541,Electronic Shopping and Mail-Order Houses,Essential Retail
+4542,Vending Machine Operators,Essential Retail
+4543,Direct Selling Establishments,Essential Retail
+0,Industry Unknown,
