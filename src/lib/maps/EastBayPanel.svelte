@@ -4,7 +4,9 @@
 		CORRIDORS,
 		CATCHMENT_STYLE,
 		getCatchmentFeature,
+		getCorridorFid,
 	} from "./LayerConfig.js";
+	import { getBusinessDistributions } from "./BusinessData.js";
 
 	// The demography group's items double as the field list for the catchment
 	// table below — same keys/labels/order as what's mappable, so the two
@@ -24,6 +26,45 @@
 	);
 
 	const catchmentFeature = $derived(getCatchmentFeature(selectedCorridorId));
+
+	// Business-composition distributions (sector, employee range, sales
+	// range, own/lease) — loaded from static CSVs and joined by FID, same
+	// as the catchment-area lookup above. Fetched async, so this is tracked
+	// as state and refreshed via an effect rather than a plain $derived.
+	let businessDistributions = $state([]);
+	let businessDistributionsLoading = $state(false);
+
+	$effect(() => {
+		const fid = getCorridorFid(selectedCorridorId);
+
+		if (fid === null || fid === undefined) {
+			businessDistributions = [];
+			businessDistributionsLoading = false;
+			return;
+		}
+
+		let cancelled = false;
+		businessDistributionsLoading = true;
+
+		getBusinessDistributions(fid).then((result) => {
+			if (cancelled) return;
+			businessDistributions = result ?? [];
+			businessDistributionsLoading = false;
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	});
+
+	function formatBusinessShare(value) {
+		if (value === null || value === undefined || Number.isNaN(value)) {
+			return "—%";
+		}
+		return `${value.toLocaleString(undefined, {
+			maximumFractionDigits: 1,
+		})}%`;
+	}
 
 	// Light heuristic formatting keyed off each demography item's field name,
 	// so the table reads naturally (currency, %, etc.) without hand-writing a
@@ -204,51 +245,41 @@
 
 	<!-- ── Business Profile ──────────────────────────────────────────────── -->
 	<section class="panel-section">
-		<h2 class="section-heading">Business Profile</h2>
 
 		{#if selectedCorridor}
-			<table class="catchment-table">
-				<tbody>
-					<tr>
-						<td class="catchment-label">Business Gain</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Loss</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Turnover</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-				</tbody>
-			</table>
+
 
 			<p class="subsection-label">Business Composition</p>
-			<table class="catchment-table">
-				<tbody>
-					<tr>
-						<td class="catchment-label">Business Type A</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Type B</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Type C</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Type D</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Other</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-				</tbody>
-			</table>
+
+			{#if businessDistributionsLoading}
+				<p class="empty-state">Loading business composition…</p>
+			{:else}
+				{#each businessDistributions as dataset (dataset.id)}
+					<p class="subsection-label subsection-label--nested">
+						{dataset.label}
+					</p>
+					{#if dataset.categories.length === 0}
+						<p class="empty-state">No data available.</p>
+					{:else}
+						<table class="catchment-table">
+							<tbody>
+								{#each dataset.categories as category (category.label)}
+									<tr>
+										<td class="catchment-label"
+											>{category.label}</td
+										>
+										<td class="catchment-value">
+											{formatBusinessShare(
+												category.value,
+											)}
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					{/if}
+				{/each}
+			{/if}
 		{:else}
 			<p class="empty-state">
 				Select a corridor above or click on the map to view its
@@ -788,6 +819,15 @@
 		text-transform: uppercase;
 		letter-spacing: 0.02em;
 		color: var(--oak-green);
+	}
+
+	.subsection-label--nested {
+		font-size: 0.68rem;
+		font-weight: bold;
+		text-transform: none;
+		letter-spacing: 0;
+		color: var(--brandGray60);
+		margin-top: 0.9rem;
 	}
 
 	.catchment-table {

@@ -109,7 +109,11 @@ export const CATCHMENT_STYLE = {
 // and CORRIDORS above key on), but OAK_catchment_area.geo.json is joined to
 // OAK_BIDs.geo.json by FID — so this first resolves the corridor's own FID
 // from OAK_BIDs, then matches that FID against the catchment file.
-export function getCatchmentFeature(corridorId) {
+// Shared BID → FID resolution. selectedCorridorId is a BID (from the
+// corridor selector and the map's click handler); several datasets
+// (catchment polygons, business-composition CSVs) are joined by FID instead,
+// so this is the one place that bridges the two identifiers.
+export function getCorridorFid(corridorId) {
 	if (!corridorId) return null;
 
 	const corridorFeature = CORRIDOR_BOUNDARIES.features.find(
@@ -117,7 +121,13 @@ export function getCatchmentFeature(corridorId) {
 	);
 	if (!corridorFeature) return null;
 
-	const fid = corridorFeature.properties.FID;
+	return corridorFeature.properties.FID;
+}
+
+export function getCatchmentFeature(corridorId) {
+	const fid = getCorridorFid(corridorId);
+	if (fid === null || fid === undefined) return null;
+
 	return (
 		CATCHMENT_BOUNDARIES.features.find(
 			(feature) => String(feature.properties.FID) === String(fid),
