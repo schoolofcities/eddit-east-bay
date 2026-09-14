@@ -92,13 +92,17 @@ const CATCHMENT_STYLE = {
   fillOpacity: 0.2,
   outlineColor: "#2F4B61"
 };
-function getCatchmentFeature(corridorId) {
+function getCorridorFid(corridorId) {
   if (!corridorId) return null;
   const corridorFeature = CORRIDOR_BOUNDARIES.features.find(
     (feature) => feature.properties.BID === corridorId
   );
   if (!corridorFeature) return null;
-  const fid = corridorFeature.properties.FID;
+  return corridorFeature.properties.FID;
+}
+function getCatchmentFeature(corridorId) {
+  const fid = getCorridorFid(corridorId);
+  if (fid === null || fid === void 0) return null;
   return CATCHMENT_BOUNDARIES.features.find(
     (feature) => String(feature.properties.FID) === String(fid)
   ) ?? null;
@@ -127,7 +131,7 @@ function EastBayMap($$payload, $$props) {
 function breaksLegend($$payload, item) {
   const each_array = ensure_array_like(item.colors);
   const each_array_1 = ensure_array_like(item.breaks);
-  $$payload.out += `<svg class="legend svelte-1egfagm" width="100%" height="40"><!--[-->`;
+  $$payload.out += `<svg class="legend svelte-ddqyat" width="100%" height="40"><!--[-->`;
   for (let i = 0, $$length = each_array.length; i < $$length; i++) {
     let color = each_array[i];
     $$payload.out += `<rect${attr("x", i * 20 + "%")} y="0" width="20%" height="20"${attr("fill", color)} stroke="white" stroke-width="1" opacity="0.7"></rect>`;
@@ -135,7 +139,7 @@ function breaksLegend($$payload, item) {
   $$payload.out += `<!--]--><!--[-->`;
   for (let i = 0, $$length = each_array_1.length; i < $$length; i++) {
     let value = each_array_1[i];
-    $$payload.out += `<text class="legend-label svelte-1egfagm"${attr("x", `${(i + 1) * 20}%`)} y="35" text-anchor="middle">`;
+    $$payload.out += `<text class="legend-label svelte-ddqyat"${attr("x", `${(i + 1) * 20}%`)} y="35" text-anchor="middle">`;
     if (i === 0) {
       $$payload.out += "<!--[-->";
       $$payload.out += `&lt;${escape_html(value.toLocaleString())}`;
@@ -164,6 +168,13 @@ function EastBayPanel($$payload, $$props) {
   } = $$props;
   const selectedCorridor = corridors.find((c) => c.id === selectedCorridorId) ?? null;
   const catchmentFeature = getCatchmentFeature(selectedCorridorId);
+  let businessDistributions = [];
+  function formatBusinessShare(value) {
+    if (value === null || value === void 0 || Number.isNaN(value)) {
+      return "—%";
+    }
+    return `${value.toLocaleString(void 0, { maximumFractionDigits: 1 })}%`;
+  }
   function formatDemographyValue(item, value) {
     if (value === null || value === void 0 || Number.isNaN(value)) {
       return "—";
@@ -186,8 +197,8 @@ function EastBayPanel($$payload, $$props) {
     return layerState[group.id]?.[item.id] ?? false;
   }
   const each_array_2 = ensure_array_like(corridors);
-  const each_array_4 = ensure_array_like(LAYER_GROUPS);
-  $$payload.out += `<aside class="panel svelte-1egfagm"><header class="panel-header svelte-1egfagm"><span class="header-org svelte-1egfagm">School of Cities | City of Oakland</span> <h1 class="header-title svelte-1egfagm">Business Corridor &amp; Mobility Map</h1> <p class="header-authors svelte-1egfagm">Author One, Author Two · 2026</p></header> <section class="panel-section svelte-1egfagm"><h2 class="section-heading svelte-1egfagm">Business Corridor</h2> <p class="section-desc svelte-1egfagm">Choose from the list or click a corridor on the map.</p> <div class="select-wrapper svelte-1egfagm"><select class="corridor-select svelte-1egfagm" aria-label="Select a corridor">`;
+  const each_array_6 = ensure_array_like(LAYER_GROUPS);
+  $$payload.out += `<aside class="panel svelte-ddqyat"><header class="panel-header svelte-ddqyat"><span class="header-org svelte-ddqyat">School of Cities | City of Oakland</span> <h1 class="header-title svelte-ddqyat">Business Corridor &amp; Mobility Map</h1> <p class="header-authors svelte-ddqyat">Author One, Author Two · 2026</p></header> <section class="panel-section svelte-ddqyat"><h2 class="section-heading svelte-ddqyat">Business Corridor</h2> <p class="section-desc svelte-ddqyat">Choose from the list or click a corridor on the map.</p> <div class="select-wrapper svelte-ddqyat"><select class="corridor-select svelte-ddqyat" aria-label="Select a corridor">`;
   $$payload.select_value = selectedCorridorId ?? "";
   $$payload.out += `<option value=""${maybe_selected($$payload, "")}>— Select a corridor —</option><!--[-->`;
   for (let $$index_2 = 0, $$length = each_array_2.length; $$index_2 < $$length; $$index_2++) {
@@ -203,65 +214,90 @@ function EastBayPanel($$payload, $$props) {
   }
   $$payload.out += `<!--]-->`;
   $$payload.select_value = void 0;
-  $$payload.out += `</select> <svg class="select-arrow svelte-1egfagm" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0l5 6 5-6z"></path></svg></div></section> <div class="divider svelte-1egfagm"></div> <section class="panel-section svelte-1egfagm">`;
+  $$payload.out += `</select> <svg class="select-arrow svelte-ddqyat" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0l5 6 5-6z"></path></svg></div></section> <div class="divider svelte-ddqyat"></div> <section class="panel-section svelte-ddqyat">`;
   if (selectedCorridor) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<p class="cd-name svelte-1egfagm">${escape_html(selectedCorridor.name)}</p> <p class="cd-address svelte-1egfagm">Business Improvement District · Oakland, CA</p> <p class="cd-body svelte-1egfagm">${escape_html(selectedCorridor.description || "Corridor description coming soon.")}</p> <div class="stat-grid svelte-1egfagm"><div class="stat-card svelte-1egfagm"><span class="stat-label svelte-1egfagm">Monthly Foot Traffic</span> <span class="stat-value placeholder svelte-1egfagm">—</span></div> <div class="stat-card svelte-1egfagm"><span class="stat-label svelte-1egfagm">Catchment Radius</span> <span class="stat-value placeholder svelte-1egfagm">—</span></div> <div class="stat-card svelte-1egfagm"><span class="stat-label svelte-1egfagm">Equity Index</span> <span class="stat-value placeholder svelte-1egfagm">—</span></div> <div class="stat-card svelte-1egfagm"><span class="stat-label svelte-1egfagm">Transit Access</span> <span class="stat-value placeholder svelte-1egfagm">—</span></div></div>`;
+    $$payload.out += `<p class="cd-name svelte-ddqyat">${escape_html(selectedCorridor.name)}</p> <p class="cd-address svelte-ddqyat">Business Improvement District · Oakland, CA</p> <p class="cd-body svelte-ddqyat">${escape_html(selectedCorridor.description || "Corridor description coming soon.")}</p> <div class="stat-grid svelte-ddqyat"><div class="stat-card svelte-ddqyat"><span class="stat-label svelte-ddqyat">Monthly Foot Traffic</span> <span class="stat-value placeholder svelte-ddqyat">—</span></div> <div class="stat-card svelte-ddqyat"><span class="stat-label svelte-ddqyat">Catchment Radius</span> <span class="stat-value placeholder svelte-ddqyat">—</span></div> <div class="stat-card svelte-ddqyat"><span class="stat-label svelte-ddqyat">Equity Index</span> <span class="stat-value placeholder svelte-ddqyat">—</span></div> <div class="stat-card svelte-ddqyat"><span class="stat-label svelte-ddqyat">Transit Access</span> <span class="stat-value placeholder svelte-ddqyat">—</span></div></div>`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<p class="empty-state svelte-1egfagm">Select a corridor above or click on the map to view its
+    $$payload.out += `<p class="empty-state svelte-ddqyat">Select a corridor above or click on the map to view its
 				activity and demographic profile.</p>`;
   }
-  $$payload.out += `<!--]--></section> <div class="divider svelte-1egfagm"></div> <section class="panel-section svelte-1egfagm"><h2 class="section-heading svelte-1egfagm">Business Profile</h2> `;
+  $$payload.out += `<!--]--></section> <div class="divider svelte-ddqyat"></div> <section class="panel-section svelte-ddqyat">`;
   if (selectedCorridor) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<table class="catchment-table svelte-1egfagm"><tbody><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Business Gain</td><td class="catchment-value svelte-1egfagm">—%</td></tr><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Business Loss</td><td class="catchment-value svelte-1egfagm">—%</td></tr><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Business Turnover</td><td class="catchment-value svelte-1egfagm">—%</td></tr></tbody></table> <p class="subsection-label svelte-1egfagm">Business Composition</p> <table class="catchment-table svelte-1egfagm"><tbody><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Business Type A</td><td class="catchment-value svelte-1egfagm">—%</td></tr><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Business Type B</td><td class="catchment-value svelte-1egfagm">—%</td></tr><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Business Type C</td><td class="catchment-value svelte-1egfagm">—%</td></tr><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Business Type D</td><td class="catchment-value svelte-1egfagm">—%</td></tr><tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">Other</td><td class="catchment-value svelte-1egfagm">—%</td></tr></tbody></table>`;
+    $$payload.out += `<p class="subsection-label svelte-ddqyat">Business Composition</p> `;
+    {
+      $$payload.out += "<!--[!-->";
+      const each_array_3 = ensure_array_like(businessDistributions);
+      $$payload.out += `<!--[-->`;
+      for (let $$index_4 = 0, $$length = each_array_3.length; $$index_4 < $$length; $$index_4++) {
+        let dataset = each_array_3[$$index_4];
+        $$payload.out += `<p class="subsection-label subsection-label--nested svelte-ddqyat">${escape_html(dataset.label)}</p> `;
+        if (dataset.categories.length === 0) {
+          $$payload.out += "<!--[-->";
+          $$payload.out += `<p class="empty-state svelte-ddqyat">No data available.</p>`;
+        } else {
+          $$payload.out += "<!--[!-->";
+          const each_array_4 = ensure_array_like(dataset.categories);
+          $$payload.out += `<table class="catchment-table svelte-ddqyat"><tbody><!--[-->`;
+          for (let $$index_3 = 0, $$length2 = each_array_4.length; $$index_3 < $$length2; $$index_3++) {
+            let category = each_array_4[$$index_3];
+            $$payload.out += `<tr class="svelte-ddqyat"><td class="catchment-label svelte-ddqyat">${escape_html(category.label)}</td><td class="catchment-value svelte-ddqyat">${escape_html(formatBusinessShare(category.value))}</td></tr>`;
+          }
+          $$payload.out += `<!--]--></tbody></table>`;
+        }
+        $$payload.out += `<!--]-->`;
+      }
+      $$payload.out += `<!--]-->`;
+    }
+    $$payload.out += `<!--]-->`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<p class="empty-state svelte-1egfagm">Select a corridor above or click on the map to view its
+    $$payload.out += `<p class="empty-state svelte-ddqyat">Select a corridor above or click on the map to view its
 				business profile.</p>`;
   }
-  $$payload.out += `<!--]--></section> <div class="divider svelte-1egfagm"></div> <section class="panel-section svelte-1egfagm"><h2 class="section-heading svelte-1egfagm">Catchment Area Profile</h2> `;
+  $$payload.out += `<!--]--></section> <div class="divider svelte-ddqyat"></div> <section class="panel-section svelte-ddqyat"><h2 class="section-heading svelte-ddqyat">Catchment Area Profile</h2> `;
   if (!selectedCorridor) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<p class="empty-state svelte-1egfagm">Select a corridor above to view its catchment area's
+    $$payload.out += `<p class="empty-state svelte-ddqyat">Select a corridor above to view its catchment area's
 				demographic profile.</p>`;
   } else {
     $$payload.out += "<!--[!-->";
     if (!catchmentFeature) {
       $$payload.out += "<!--[-->";
-      $$payload.out += `<p class="empty-state svelte-1egfagm">No catchment area data found for this corridor.</p>`;
+      $$payload.out += `<p class="empty-state svelte-ddqyat">No catchment area data found for this corridor.</p>`;
     } else {
       $$payload.out += "<!--[!-->";
-      const each_array_3 = ensure_array_like(DEMOGRAPHY_ITEMS);
-      $$payload.out += `<div class="catchment-legend svelte-1egfagm"><span class="catchment-swatch svelte-1egfagm"${attr_style(`border-color: ${CATCHMENT_STYLE.outlineColor};`)}><span class="catchment-swatch-fill svelte-1egfagm"${attr_style(`background: ${CATCHMENT_STYLE.fillColor}; opacity: ${CATCHMENT_STYLE.fillOpacity};`)}></span></span> <span class="catchment-legend-label svelte-1egfagm">Catchment area boundary</span></div> <table class="catchment-table svelte-1egfagm"><tbody><!--[-->`;
-      for (let $$index_3 = 0, $$length = each_array_3.length; $$index_3 < $$length; $$index_3++) {
-        let item = each_array_3[$$index_3];
-        $$payload.out += `<tr class="svelte-1egfagm"><td class="catchment-label svelte-1egfagm">${escape_html(item.label)}</td><td class="catchment-value svelte-1egfagm">${escape_html(formatDemographyValue(item, catchmentFeature.properties[item.key]))}</td></tr>`;
+      const each_array_5 = ensure_array_like(DEMOGRAPHY_ITEMS);
+      $$payload.out += `<div class="catchment-legend svelte-ddqyat"><span class="catchment-swatch svelte-ddqyat"${attr_style(`border-color: ${CATCHMENT_STYLE.outlineColor};`)}><span class="catchment-swatch-fill svelte-ddqyat"${attr_style(`background: ${CATCHMENT_STYLE.fillColor}; opacity: ${CATCHMENT_STYLE.fillOpacity};`)}></span></span> <span class="catchment-legend-label svelte-ddqyat">Catchment area boundary</span></div> <table class="catchment-table svelte-ddqyat"><tbody><!--[-->`;
+      for (let $$index_5 = 0, $$length = each_array_5.length; $$index_5 < $$length; $$index_5++) {
+        let item = each_array_5[$$index_5];
+        $$payload.out += `<tr class="svelte-ddqyat"><td class="catchment-label svelte-ddqyat">${escape_html(item.label)}</td><td class="catchment-value svelte-ddqyat">${escape_html(formatDemographyValue(item, catchmentFeature.properties[item.key]))}</td></tr>`;
       }
       $$payload.out += `<!--]--></tbody></table>`;
     }
     $$payload.out += `<!--]-->`;
   }
-  $$payload.out += `<!--]--></section> <div class="divider svelte-1egfagm"></div> <section class="panel-section svelte-1egfagm"><h2 class="section-heading svelte-1egfagm">Map Layers</h2> <!--[-->`;
-  for (let $$index_7 = 0, $$length = each_array_4.length; $$index_7 < $$length; $$index_7++) {
-    let group = each_array_4[$$index_7];
+  $$payload.out += `<!--]--></section> <div class="divider svelte-ddqyat"></div> <section class="panel-section svelte-ddqyat"><h2 class="section-heading svelte-ddqyat">Map Layers</h2> <!--[-->`;
+  for (let $$index_9 = 0, $$length = each_array_6.length; $$index_9 < $$length; $$index_9++) {
+    let group = each_array_6[$$index_9];
     if (group.id !== "demography") {
       $$payload.out += "<!--[-->";
-      $$payload.out += `<div class="layer-group svelte-1egfagm"><span class="layer-group-label svelte-1egfagm">${escape_html(group.label)}</span> `;
+      $$payload.out += `<div class="layer-group svelte-ddqyat"><span class="layer-group-label svelte-ddqyat">${escape_html(group.label)}</span> `;
       if (group.ui === "dropdown") {
         $$payload.out += "<!--[-->";
-        const each_array_5 = ensure_array_like(group.items);
-        $$payload.out += `<div class="select-wrapper svelte-1egfagm"><select class="corridor-select layer-select svelte-1egfagm"${attr("aria-label", `Select ${group.label} layer`)}>`;
+        const each_array_7 = ensure_array_like(group.items);
+        $$payload.out += `<div class="select-wrapper svelte-ddqyat"><select class="corridor-select layer-select svelte-ddqyat"${attr("aria-label", `Select ${group.label} layer`)}>`;
         $$payload.select_value = layerState[group.id]?.activeId ?? "";
         $$payload.out += `<option value=""${maybe_selected($$payload, "")}>None</option><!--[-->`;
-        for (let $$index_4 = 0, $$length2 = each_array_5.length; $$index_4 < $$length2; $$index_4++) {
-          let item = each_array_5[$$index_4];
+        for (let $$index_6 = 0, $$length2 = each_array_7.length; $$index_6 < $$length2; $$index_6++) {
+          let item = each_array_7[$$index_6];
           $$payload.out += `<option${attr("value", item.id)}${maybe_selected($$payload, item.id)}>${escape_html(item.label)}</option>`;
         }
         $$payload.out += `<!--]-->`;
         $$payload.select_value = void 0;
-        $$payload.out += `</select> <svg class="select-arrow svelte-1egfagm" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0l5 6 5-6z"></path></svg></div> `;
+        $$payload.out += `</select> <svg class="select-arrow svelte-ddqyat" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0l5 6 5-6z"></path></svg></div> `;
         if (group.id === "demography" && layerState.demography?.activeId) {
           $$payload.out += "<!--[-->";
           const selectedItem = group.items.find((item) => item.id === layerState.demography.activeId);
@@ -280,18 +316,18 @@ function EastBayPanel($$payload, $$props) {
         $$payload.out += "<!--[!-->";
         if (group.ui === "radio-toggles") {
           $$payload.out += "<!--[-->";
-          const each_array_6 = ensure_array_like(group.items);
-          $$payload.out += `<div class="activity-grid svelte-1egfagm"><!--[-->`;
-          for (let $$index_5 = 0, $$length2 = each_array_6.length; $$index_5 < $$length2; $$index_5++) {
-            let item = each_array_6[$$index_5];
-            $$payload.out += `<button type="button"${attr_class("activity-btn svelte-1egfagm", void 0, { "active": isOn(group, item) })}${attr("disabled", group.id === "activity" && !selectedCorridorId, true)}>${escape_html(item.label)}</button>`;
+          const each_array_8 = ensure_array_like(group.items);
+          $$payload.out += `<div class="activity-grid svelte-ddqyat"><!--[-->`;
+          for (let $$index_7 = 0, $$length2 = each_array_8.length; $$index_7 < $$length2; $$index_7++) {
+            let item = each_array_8[$$index_7];
+            $$payload.out += `<button type="button"${attr_class("activity-btn svelte-ddqyat", void 0, { "active": isOn(group, item) })}${attr("disabled", group.id === "activity" && !selectedCorridorId, true)}>${escape_html(item.label)}</button>`;
           }
           $$payload.out += `<!--]--></div> `;
           if (group.id === "activity") {
             $$payload.out += "<!--[-->";
             if (!selectedCorridorId) {
               $$payload.out += "<!--[-->";
-              $$payload.out += `<p class="section-desc activity-hint svelte-1egfagm">Select a corridor to view its home-origin
+              $$payload.out += `<p class="section-desc activity-hint svelte-ddqyat">Select a corridor to view its home-origin
 								activity layers.</p>`;
             } else {
               $$payload.out += "<!--[!-->";
@@ -301,7 +337,7 @@ function EastBayPanel($$payload, $$props) {
                 if (selectedActivityItem) {
                   $$payload.out += "<!--[-->";
                   breaksLegend($$payload, selectedActivityItem);
-                  $$payload.out += `<!----> <p class="section-desc legend-caption svelte-1egfagm">% share of the corridor's estimated
+                  $$payload.out += `<!----> <p class="section-desc legend-caption svelte-ddqyat">% share of the corridor's estimated
 									home-origin visitors, by census block
 									group (quintiles). Gray areas had no
 									estimated visitors.</p>`;
@@ -321,11 +357,11 @@ function EastBayPanel($$payload, $$props) {
           $$payload.out += `<!--]-->`;
         } else {
           $$payload.out += "<!--[!-->";
-          const each_array_7 = ensure_array_like(group.items);
+          const each_array_9 = ensure_array_like(group.items);
           $$payload.out += `<!--[-->`;
-          for (let $$index_6 = 0, $$length2 = each_array_7.length; $$index_6 < $$length2; $$index_6++) {
-            let item = each_array_7[$$index_6];
-            $$payload.out += `<label class="layer-toggle svelte-1egfagm"><span${attr_class("toggle-track svelte-1egfagm", void 0, { "on": isOn(group, item) })}><input type="checkbox"${attr("checked", isOn(group, item), true)} class="sr-only svelte-1egfagm"/> <span class="toggle-thumb svelte-1egfagm"></span></span> <span class="layer-label svelte-1egfagm">${escape_html(item.label)}</span></label>`;
+          for (let $$index_8 = 0, $$length2 = each_array_9.length; $$index_8 < $$length2; $$index_8++) {
+            let item = each_array_9[$$index_8];
+            $$payload.out += `<label class="layer-toggle svelte-ddqyat"><span${attr_class("toggle-track svelte-ddqyat", void 0, { "on": isOn(group, item) })}><input type="checkbox"${attr("checked", isOn(group, item), true)} class="sr-only svelte-ddqyat"/> <span class="toggle-thumb svelte-ddqyat"></span></span> <span class="layer-label svelte-ddqyat">${escape_html(item.label)}</span></label>`;
           }
           $$payload.out += `<!--]-->`;
         }
