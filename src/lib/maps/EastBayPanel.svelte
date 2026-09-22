@@ -66,6 +66,17 @@
 		})}%`;
 	}
 
+	// Bar width is a straight linear function of the raw % value, in
+	// pixels: a flat base (so the white % label always has somewhere
+	// to sit, even at 0%) plus a per-percentage-point increment.
+	function barWidthPx(value) {
+		const v =
+			value === null || value === undefined || Number.isNaN(value)
+				? 0
+				: value;
+		return v * 2 + 25;
+	}
+
 	// Light heuristic formatting keyed off each demography item's field name,
 	// so the table reads naturally (currency, %, etc.) without hand-writing a
 	// format rule per field.
@@ -261,22 +272,34 @@
 					{#if dataset.categories.length === 0}
 						<p class="empty-state">No data available.</p>
 					{:else}
-						<table class="catchment-table">
-							<tbody>
-								{#each dataset.categories as category (category.label)}
-									<tr>
-										<td class="catchment-label"
-											>{category.label}</td
-										>
-										<td class="catchment-value">
-											{formatBusinessShare(
+						<div class="business-bar-list">
+							{#each dataset.categories as category (category.label)}
+								<div class="business-bar-row">
+									<span class="business-bar-label"
+										>{category.label}</span
+									>
+									<span class="business-bar-divider"></span>
+									<div
+										class="business-bar-track"
+										role="img"
+										aria-label={`${category.label}: ${formatBusinessShare(category.value)}`}
+									>
+										<div
+											class="business-bar-fill"
+											style={`width: ${barWidthPx(
 												category.value,
-											)}
-										</td>
-									</tr>
-								{/each}
-							</tbody>
-						</table>
+											)}px`}
+										>
+											<span class="business-bar-value">
+												{formatBusinessShare(
+													category.value,
+												)}
+											</span>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
 					{/if}
 				{/each}
 			{/if}
@@ -862,6 +885,63 @@
 		color: var(--oak-green-dark);
 		white-space: nowrap;
 		padding-left: 10px;
+	}
+
+	/* ── Business Composition Bars ─────────────────────────────────────── */
+
+	.business-bar-list {
+		display: flex;
+		flex-direction: column;
+		gap: 7px;
+	}
+
+	.business-bar-row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.business-bar-label {
+		flex: 0 0 34%;
+		max-width: 34%;
+		font-size: 0.71rem;
+		color: var(--brandGray60);
+		line-height: 1.25;
+	}
+
+	.business-bar-divider {
+		align-self: stretch;
+		width: 1px;
+		background: var(--oak-green-tint);
+		flex-shrink: 0;
+	}
+
+	.business-bar-track {
+		flex: 1;
+		min-width: 0;
+		height: 18px;
+		background: var(--oak-green-tint);
+		border-radius: 3px;
+		overflow: hidden;
+	}
+
+	.business-bar-fill {
+		height: 100%;
+		background: var(--oak-green);
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding: 0 2px;
+		box-sizing: border-box;
+		border-radius: 3px;
+	}
+
+	.business-bar-value {
+		font-family: "Public Sans", sans-serif;
+		font-weight: 700;
+		font-size: 0.6rem;
+		color: #ffffff;
+		white-space: nowrap;
 	}
 
 	.legend {

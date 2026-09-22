@@ -2,7 +2,7 @@
 	
 	let password = '';
 	let isAuthenticated = false;
-	const correctPassword = 'catcatmeow'; 
+	const correctPassword = 'eastbay'; 
 
 	function checkPassword() {
 		if (password === correctPassword) {
