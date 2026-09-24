@@ -4,7 +4,9 @@
 		CORRIDORS,
 		CATCHMENT_STYLE,
 		getCatchmentFeature,
+		getCorridorFid,
 	} from "./LayerConfig.js";
+	import { getBusinessDistributions } from "./BusinessData.js";
 
 	// The demography group's items double as the field list for the catchment
 	// table below — same keys/labels/order as what's mappable, so the two
@@ -24,6 +26,56 @@
 	);
 
 	const catchmentFeature = $derived(getCatchmentFeature(selectedCorridorId));
+
+	// Business-composition distributions (sector, employee range, sales
+	// range, own/lease) — loaded from static CSVs and joined by FID, same
+	// as the catchment-area lookup above. Fetched async, so this is tracked
+	// as state and refreshed via an effect rather than a plain $derived.
+	let businessDistributions = $state([]);
+	let businessDistributionsLoading = $state(false);
+
+	$effect(() => {
+		const fid = getCorridorFid(selectedCorridorId);
+
+		if (fid === null || fid === undefined) {
+			businessDistributions = [];
+			businessDistributionsLoading = false;
+			return;
+		}
+
+		let cancelled = false;
+		businessDistributionsLoading = true;
+
+		getBusinessDistributions(fid).then((result) => {
+			if (cancelled) return;
+			businessDistributions = result ?? [];
+			businessDistributionsLoading = false;
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	});
+
+	function formatBusinessShare(value) {
+		if (value === null || value === undefined || Number.isNaN(value)) {
+			return "—%";
+		}
+		return `${value.toLocaleString(undefined, {
+			maximumFractionDigits: 1,
+		})}%`;
+	}
+
+	// Bar width is a straight linear function of the raw % value, in
+	// pixels: a flat base (so the white % label always has somewhere
+	// to sit, even at 0%) plus a per-percentage-point increment.
+	function barWidthPx(value) {
+		const v =
+			value === null || value === undefined || Number.isNaN(value)
+				? 0
+				: value;
+		return v * 2 + 25;
+	}
 
 	// Light heuristic formatting keyed off each demography item's field name,
 	// so the table reads naturally (currency, %, etc.) without hand-writing a
@@ -204,51 +256,53 @@
 
 	<!-- ── Business Profile ──────────────────────────────────────────────── -->
 	<section class="panel-section">
-		<h2 class="section-heading">Business Profile</h2>
 
 		{#if selectedCorridor}
-			<table class="catchment-table">
-				<tbody>
-					<tr>
-						<td class="catchment-label">Business Gain</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Loss</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Turnover</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-				</tbody>
-			</table>
+
 
 			<p class="subsection-label">Business Composition</p>
-			<table class="catchment-table">
-				<tbody>
-					<tr>
-						<td class="catchment-label">Business Type A</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Type B</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Type C</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Business Type D</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-					<tr>
-						<td class="catchment-label">Other</td>
-						<td class="catchment-value">—%</td>
-					</tr>
-				</tbody>
-			</table>
+
+			{#if businessDistributionsLoading}
+				<p class="empty-state">Loading business composition…</p>
+			{:else}
+				{#each businessDistributions as dataset (dataset.id)}
+					<p class="subsection-label subsection-label--nested">
+						{dataset.label}
+					</p>
+					{#if dataset.categories.length === 0}
+						<p class="empty-state">No data available.</p>
+					{:else}
+						<div class="business-bar-list">
+							{#each dataset.categories as category (category.label)}
+								<div class="business-bar-row">
+									<span class="business-bar-label"
+										>{category.label}</span
+									>
+									<span class="business-bar-divider"></span>
+									<div
+										class="business-bar-track"
+										role="img"
+										aria-label={`${category.label}: ${formatBusinessShare(category.value)}`}
+									>
+										<div
+											class="business-bar-fill"
+											style={`width: ${barWidthPx(
+												category.value,
+											)}px`}
+										>
+											<span class="business-bar-value">
+												{formatBusinessShare(
+													category.value,
+												)}
+											</span>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				{/each}
+			{/if}
 		{:else}
 			<p class="empty-state">
 				Select a corridor above or click on the map to view its
@@ -790,6 +844,15 @@
 		color: var(--oak-green);
 	}
 
+	.subsection-label--nested {
+		font-size: 0.68rem;
+		font-weight: bold;
+		text-transform: none;
+		letter-spacing: 0;
+		color: var(--brandGray60);
+		margin-top: 0.9rem;
+	}
+
 	.catchment-table {
 		width: 100%;
 		border-collapse: collapse;
@@ -822,6 +885,63 @@
 		color: var(--oak-green-dark);
 		white-space: nowrap;
 		padding-left: 10px;
+	}
+
+	/* ── Business Composition Bars ─────────────────────────────────────── */
+
+	.business-bar-list {
+		display: flex;
+		flex-direction: column;
+		gap: 7px;
+	}
+
+	.business-bar-row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.business-bar-label {
+		flex: 0 0 34%;
+		max-width: 34%;
+		font-size: 0.71rem;
+		color: var(--brandGray60);
+		line-height: 1.25;
+	}
+
+	.business-bar-divider {
+		align-self: stretch;
+		width: 1px;
+		background: var(--oak-green-tint);
+		flex-shrink: 0;
+	}
+
+	.business-bar-track {
+		flex: 1;
+		min-width: 0;
+		height: 18px;
+		background: var(--oak-green-tint);
+		border-radius: 3px;
+		overflow: hidden;
+	}
+
+	.business-bar-fill {
+		height: 100%;
+		background: var(--oak-green);
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding: 0 2px;
+		box-sizing: border-box;
+		border-radius: 3px;
+	}
+
+	.business-bar-value {
+		font-family: "Public Sans", sans-serif;
+		font-weight: 700;
+		font-size: 0.6rem;
+		color: #ffffff;
+		white-space: nowrap;
 	}
 
 	.legend {

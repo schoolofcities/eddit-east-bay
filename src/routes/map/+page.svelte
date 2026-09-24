@@ -1,4 +1,6 @@
 <script>
+	import Password from "$lib/Password.svelte";
+
     import "../../assets/global-styles.css";
 
     import EastBayMap from "$lib/maps/EastBayMap.svelte";
@@ -30,6 +32,8 @@
         content="width=device-width, initial-scale=1, minimum-scale=1"
     />
 </svelte:head>
+
+<Password />
 
 <div class="layout">
     <div class="panel-wrap">
