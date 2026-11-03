@@ -8,6 +8,8 @@
 	} from "./LayerConfig.js";
 	import { getBusinessDistributions } from "./BusinessData.js";
 	import BusinessBarChart from "./BusinessBarChart.svelte";
+	import CatchmentQuintile from "./CatchmentQuintile.svelte";
+	import { MAP_TOGGLE_IDS } from "./EastBayMap.svelte";
 
 	// Per-dataset threshold (%) below which categories are grouped into
 	// "Other" in the stacked bar. Keys are dataset ids from BusinessData.js.
@@ -34,6 +36,23 @@
 		(g) => g.id === "demography",
 	).items;
 
+	// The activity layers are chosen from the corridor profile, right under
+	// its stat cards, rather than from the Map Layers list.
+	const ACTIVITY_GROUP = LAYER_GROUPS.find((g) => g.id === "activity");
+
+	// What's left for the Map Layers list: demography has its own section,
+	// activity sits in the corridor profile, and the layers in
+	// MAP_TOGGLE_IDS are buttons on the map itself. Groups left with no
+	// items are dropped, and the section hides if nothing remains.
+	const PANEL_LAYER_GROUPS = LAYER_GROUPS.filter(
+		(g) => g.id !== "demography" && g.id !== "activity",
+	)
+		.map((g) => ({
+			...g,
+			items: g.items.filter((i) => !MAP_TOGGLE_IDS.includes(i.id)),
+		}))
+		.filter((g) => g.items.length > 0);
+
 	let {
 		selectedCorridorId = $bindable(null),
 		layerState = $bindable({}),
@@ -45,6 +64,39 @@
 	);
 
 	const catchmentFeature = $derived(getCatchmentFeature(selectedCorridorId));
+
+	// Quintile cut points (20th, 40th, 60th, 80th percentile) of each
+	// demography field across every corridor's catchment area, so each value
+	// in the catchment profile can show which quintile it falls in.
+	function quantile(sorted, p) {
+		const pos = (sorted.length - 1) * p;
+		const lo = Math.floor(pos);
+		const hi = Math.ceil(pos);
+		return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+	}
+
+	const catchmentQuintiles = $derived.by(() => {
+		const features = corridors
+			.map((c) => getCatchmentFeature(c.id))
+			.filter(Boolean);
+
+		return Object.fromEntries(
+			DEMOGRAPHY_ITEMS.map((item) => {
+				const values = features
+					.map((f) => f.properties?.[item.key])
+					.filter((v) => v !== null && v !== undefined && v !== "")
+					.map(Number)
+					.filter((v) => !Number.isNaN(v))
+					.sort((a, b) => a - b);
+
+				if (values.length < 2) return [item.key, null];
+				return [
+					item.key,
+					[0.2, 0.4, 0.6, 0.8].map((p) => quantile(values, p)),
+				];
+			}),
+		);
+	});
 
 	// Business-composition distributions (sector, employee range, sales
 	// range, own/lease) — loaded from static CSVs and joined by FID, same
@@ -243,6 +295,38 @@
 					<span class="stat-value placeholder">—</span>
 				</div>
 			</div>
+
+			{#if ACTIVITY_GROUP}
+				<div class="profile-activity">
+					<span class="layer-group-label">{ACTIVITY_GROUP.label}</span>
+					<div class="activity-grid">
+						{#each ACTIVITY_GROUP.items as item (item.id)}
+							<button
+								type="button"
+								class="activity-btn"
+								class:active={isOn(ACTIVITY_GROUP, item)}
+								onclick={() => setExclusive(ACTIVITY_GROUP.id, item.id)}
+							>
+								{item.label}
+							</button>
+						{/each}
+					</div>
+
+					{#if layerState.activity?.activeId}
+						{@const selectedActivityItem = ACTIVITY_GROUP.items.find(
+							(item) => item.id === layerState.activity.activeId,
+						)}
+						{#if selectedActivityItem}
+							{@render breaksLegend(selectedActivityItem)}
+							<p class="section-desc legend-caption">
+								% share of the corridor's estimated home-origin
+								visitors, by census block group (quintiles). Gray
+								areas had no estimated visitors.
+							</p>
+						{/if}
+					{/if}
+				</div>
+			{/if}
 		{:else}
 			<p class="empty-state">
 				Select a corridor above or click on the map to view its
@@ -311,31 +395,31 @@
 				<span class="catchment-legend-label">Catchment area boundary</span>
 			</div>
 
-			<table class="catchment-table">
-				<tbody>
-					{#each DEMOGRAPHY_ITEMS as item (item.id)}
-						<tr>
-							<td class="catchment-label">{item.label}</td>
-							<td class="catchment-value">
-								{formatDemographyValue(
-									item,
-									catchmentFeature.properties[item.key],
-								)}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
+			<p class="section-desc quintile-caption">
+				The five dots after each value show which fifth of all
+				catchment areas it falls in, from lowest to highest.
+			</p>
+
+			<div class="catchment-rows">
+				{#each DEMOGRAPHY_ITEMS as item (item.id)}
+					<CatchmentQuintile
+						label={item.label}
+						value={catchmentFeature.properties[item.key]}
+						breaks={catchmentQuintiles[item.key]}
+						format={(v) => formatDemographyValue(item, v)}
+					/>
+				{/each}
+			</div>
 		{/if}
 	</section>
 
+	{#if PANEL_LAYER_GROUPS.length > 0}
 	<div class="divider"></div>
 	<!-- ── Layer Toggles ─────────────────────────────────────────────── -->
 	<section class="panel-section">
 		<h2 class="section-heading">Map Layers</h2>
 
-		{#each LAYER_GROUPS as group (group.id)}
-			{#if group.id !== "demography"}
+		{#each PANEL_LAYER_GROUPS as group (group.id)}
 			<div class="layer-group">
 				<span class="layer-group-label">{group.label}</span>
 
@@ -383,37 +467,12 @@
 								type="button"
 								class="activity-btn"
 								class:active={isOn(group, item)}
-								disabled={group.id === "activity" &&
-									!selectedCorridorId}
 								onclick={() => setExclusive(group.id, item.id)}
 							>
 								{item.label}
 							</button>
 						{/each}
 					</div>
-
-					{#if group.id === "activity"}
-						{#if !selectedCorridorId}
-							<p class="section-desc activity-hint">
-								Select a corridor to view its home-origin
-								activity layers.
-							</p>
-						{:else if layerState.activity?.activeId}
-							{@const selectedActivityItem = group.items.find(
-								(item) =>
-									item.id === layerState.activity.activeId,
-							)}
-							{#if selectedActivityItem}
-								{@render breaksLegend(selectedActivityItem)}
-								<p class="section-desc legend-caption">
-									% share of the corridor's estimated
-									home-origin visitors, by census block
-									group (quintiles). Gray areas had no
-									estimated visitors.
-								</p>
-							{/if}
-						{/if}
-					{/if}
 				{:else}
 					{#each group.items as item (item.id)}
 						<label class="layer-toggle">
@@ -438,9 +497,9 @@
 					{/each}
 				{/if}
 			</div>
-			{/if}
 		{/each}
 	</section>
+	{/if}
 </aside>
 
 <style>
@@ -704,8 +763,8 @@
 		cursor: not-allowed;
 	}
 
-	.activity-hint {
-		margin: 6px 0 0;
+	.profile-activity {
+		margin-top: 14px;
 	}
 
 	.legend-caption {
@@ -815,38 +874,8 @@
 		color: var(--oak-green);
 	}
 
-	.catchment-table {
-		width: 100%;
-		border-collapse: collapse;
-	}
-
-	.catchment-table tr {
-		border-bottom: 1px solid var(--oak-green-tint);
-	}
-
-	.catchment-table tr:last-child {
-		border-bottom: none;
-	}
-
-	.catchment-label,
-	.catchment-value {
-		padding: 6px 0;
-		font-size: 0.73rem;
-		line-height: 1.35;
-		vertical-align: baseline;
-	}
-
-	.catchment-label {
-		color: var(--brandGray60);
-	}
-
-	.catchment-value {
-		text-align: right;
-		font-family: "Public Sans", sans-serif;
-		font-weight: 700;
-		color: var(--oak-green-dark);
-		white-space: nowrap;
-		padding-left: 10px;
+	.quintile-caption {
+		margin: 0 0 4px;
 	}
 
 	.legend {

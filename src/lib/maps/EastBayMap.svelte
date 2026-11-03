@@ -1,3 +1,10 @@
+<script module>
+	// Layers toggled from buttons at the top left of the map, rather than
+	// from the panel's Map Layers list. EastBayPanel imports this to leave
+	// them out of its own list.
+	export const MAP_TOGGLE_IDS = ["transit-rail", "ref-council-districts"];
+</script>
+
 <script>
 	import { onMount } from "svelte";
 	import maplibregl from "maplibre-gl";
@@ -28,8 +35,31 @@
 	let {
 		map = $bindable(null),
 		selectedCorridorId = $bindable(null),
-		layerState = {},
+		layerState = $bindable({}),
 	} = $props();
+
+	// Each on-map toggle, paired with the layer group it belongs to.
+	const MAP_TOGGLES = MAP_TOGGLE_IDS.map((id) => {
+		const group = LAYER_GROUPS.find((g) => g.items.some((i) => i.id === id));
+		const item = group?.items.find((i) => i.id === id);
+		return group && item ? { group, item } : null;
+	}).filter(Boolean);
+
+	function isToggleOn({ group, item }) {
+		return group.exclusive
+			? layerState[group.id]?.activeId === item.id
+			: (layerState[group.id]?.[item.id] ?? false);
+	}
+
+	function toggleMapLayer(toggle) {
+		const { group, item } = toggle;
+		if (!layerState[group.id]) layerState[group.id] = {};
+		if (group.exclusive) {
+			layerState[group.id].activeId = isToggleOn(toggle) ? null : item.id;
+		} else {
+			layerState[group.id][item.id] = !isToggleOn(toggle);
+		}
+	}
 
 	const MAP_STYLE = {
 		version: 8,
@@ -994,12 +1024,126 @@
 	});
 </script>
 
-<div bind:this={mapContainer} class="map-container"></div>
+<div class="map-wrapper">
+	<div bind:this={mapContainer} class="map-container"></div>
+
+	{#if MAP_TOGGLES.length}
+		<div class="map-toggles" role="group" aria-label="Reference layers">
+			{#each MAP_TOGGLES as toggle (toggle.item.id)}
+				<label class="map-toggle">
+					<input
+						type="checkbox"
+						class="sr-only"
+						checked={isToggleOn(toggle)}
+						onchange={() => toggleMapLayer(toggle)}
+					/>
+					<span class="toggle-track" class:on={isToggleOn(toggle)}>
+						<span class="toggle-thumb"></span>
+					</span>
+					<span class="toggle-label">{toggle.item.label}</span>
+				</label>
+			{/each}
+		</div>
+	{/if}
+</div>
 
 <style>
+	.map-wrapper {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
 	.map-container {
 		width: 100%;
 		height: 100%;
+	}
+
+	/* A small card of switches, matching the panel's layer toggles. Sits
+	   above the map canvas, at the same level as MapLibre's own controls. */
+	.map-toggles {
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		padding: 6px 10px;
+		background: #fff;
+		border-radius: 6px;
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+		max-width: calc(100% - 70px);
+	}
+
+	.map-toggle {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 3px 0;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	/* Visually hidden, but still focusable and read by screen readers. */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	.toggle-track {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		width: 30px;
+		height: 16px;
+		border-radius: 8px;
+		background: var(--brandGray);
+		flex-shrink: 0;
+		transition: background 0.2s;
+	}
+
+	.toggle-track.on {
+		background: #eac555;
+	}
+
+	.map-toggle input:focus-visible + .toggle-track {
+		outline: 2px solid #2c683d;
+		outline-offset: 2px;
+	}
+
+	.toggle-thumb {
+		position: absolute;
+		left: 2px;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: #fff;
+		transition: left 0.2s;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	}
+
+	.toggle-track.on .toggle-thumb {
+		left: 16px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.toggle-track,
+		.toggle-thumb {
+			transition: none;
+		}
+	}
+
+	.toggle-label {
+		font-family: "Public Sans", sans-serif;
+		font-size: 0.72rem;
+		color: rgb(30, 60, 80);
+		line-height: 1.3;
+		white-space: nowrap;
 	}
 
 	/*
