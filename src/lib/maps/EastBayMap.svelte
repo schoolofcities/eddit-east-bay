@@ -107,10 +107,6 @@
 			new maplibregl.ScaleControl({ unit: "metric", maxWidth: 100 }),
 			"bottom-right",
 		);
-		map.addControl(
-			new maplibregl.AttributionControl({ compact: true }),
-			"bottom-left",
-		);
 		map.dragRotate.disable();
 		map.touchZoomRotate.disableRotation();
 
@@ -203,7 +199,7 @@
 		// ── Click to select ───────────────────────────────────────────────
 		map.on("click", "corridor-fill", (e) => {
 			const feature = e.features?.[0];
-			if (feature) selectedCorridorId = feature.properties.BID;
+			if (feature) selectedCorridorId = feature.properties.corridor_name;
 		});
 
 		// ── Hover popup (desktop / fine-pointer only) ─────────────────────
@@ -224,7 +220,7 @@
 				const f = e.features[0];
 				hoverPopup
 					.setLngLat(e.lngLat)
-					.setHTML(`<span>${f.properties.BID}</span>`)
+					.setHTML(`<span>${f.properties.corridor_name}</span>`)
 					.addTo(map);
 			});
 			map.on("mouseleave", "corridor-fill", () => {
@@ -245,7 +241,7 @@
 	// corridor and joined to it by FID. Starts hidden with no filter — the
 	// $effect below shows just the selected corridor's own polygon, filtered
 	// by FID, once one is selected. Inserted with a beforeId of "corridor-fill"
-	// so it sits below the OAK_BID layer regardless of call order.
+	// so it sits below the corridor layer regardless of call order.
 	function addCatchmentAreas() {
 		if (!map) return;
 
@@ -939,7 +935,7 @@
 	$effect(() => {
 		if (!selectedCorridorId || !mapLoaded) return;
 		const feature = CORRIDOR_BOUNDARIES.features.find(
-			(f) => f.properties.BID === selectedCorridorId,
+			(f) => f.properties.corridor_name === selectedCorridorId,
 		);
 		if (feature) {
 			map?.easeTo({
@@ -974,7 +970,7 @@
 		const selected = selectedCorridorId ?? "";
 		const colorExpr = [
 			"case",
-			["==", ["get", "BID"], selected],
+			["==", ["get", "corridor_name"], selected],
 			"#DC4633",
 			OAK_GREEN,
 		];
@@ -983,7 +979,7 @@
 			map.setPaintProperty("corridor-fill", "fill-color", colorExpr);
 			map.setPaintProperty("corridor-fill", "fill-opacity", [
 				"case",
-				["==", ["get", "BID"], selected],
+				["==", ["get", "corridor_name"], selected],
 				0.2,
 				0.08,
 			]);
@@ -992,7 +988,7 @@
 			map.setPaintProperty("corridor-outline", "line-color", colorExpr);
 			map.setPaintProperty("corridor-outline", "line-width", [
 				"case",
-				["==", ["get", "BID"], selected],
+				["==", ["get", "corridor_name"], selected],
 				2,
 				1,
 			]);
@@ -1063,7 +1059,7 @@
 	   above the map canvas, at the same level as MapLibre's own controls. */
 	.map-toggles {
 		position: absolute;
-		top: 10px;
+		bottom: 10px;
 		left: 10px;
 		z-index: 2;
 		display: flex;
@@ -1146,10 +1142,7 @@
 		white-space: nowrap;
 	}
 
-	/*
-		Push the attribution badge up so it clears the scale bar.
-		Scale bar sits at bottom-right; attribution at bottom-left is fine as-is.
-	*/
+	/* Scale bar sits flush in the bottom-right corner. */
 	:global(.maplibregl-ctrl-bottom-right) {
 		bottom: 0;
 		right: 0;

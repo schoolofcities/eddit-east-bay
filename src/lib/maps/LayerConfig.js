@@ -1,4 +1,4 @@
-import bidBoundaries from "../../data/OAK_BIDs.geo.json";
+import corridorBoundaries from "../../data/OAK_CORRIDORS.geo.json";
 import catchmentBoundaries from "../../data/OAK_catchment_area.geo.json";
 
 
@@ -80,18 +80,18 @@ export const LAYER_GROUPS = [
 ];
 
 
-export const CORRIDOR_BOUNDARIES = bidBoundaries;
+export const CORRIDOR_BOUNDARIES = corridorBoundaries;
 
-export const CORRIDORS = bidBoundaries.features
+export const CORRIDORS = corridorBoundaries.features
 	.map((feature) => ({
-		id: feature.properties.BID,
-		name: feature.properties.BID,
+		id: feature.properties.corridor_name,
+		name: feature.properties.corridor_name,
 	}))
 	.sort((a, b) => a.name.localeCompare(b.name));
 
 // Catchment-area polygons — one per corridor, carrying the same demographic
 // fields (pop_density_sqmi, median_household_income, etc.) as the demography
-// layer above. Matched to a corridor by FID, same as OAK_BIDs.geo.json.
+// layer above. Matched to a corridor by FID, same as OAK_CORRIDORS.geo.json.
 export const CATCHMENT_BOUNDARIES = catchmentBoundaries;
 
 // Shared styling for the catchment-area underlay, so the map's fill/outline
@@ -103,21 +103,15 @@ export const CATCHMENT_STYLE = {
 	outlineWidth: 0,
 };
 
-// Shared lookup so the map (for the fill layer) and the panel (for the
-// tabular profile) agree on exactly how a corridor maps to its catchment
-// feature. selectedCorridorId is a BID (that's what the map's click handler
-// and CORRIDORS above key on), but OAK_catchment_area.geo.json is joined to
-// OAK_BIDs.geo.json by FID — so this first resolves the corridor's own FID
-// from OAK_BIDs, then matches that FID against the catchment file.
-// Shared BID → FID resolution. selectedCorridorId is a BID (from the
-// corridor selector and the map's click handler); several datasets
-// (catchment polygons, business-composition CSVs) are joined by FID instead,
-// so this is the one place that bridges the two identifiers.
+// Shared corridor_name → FID resolution. selectedCorridorId is a
+// corridor_name (from the corridor selector and the map's click handler),
+// but several datasets (catchment polygons, business-composition CSVs) are
+// joined by FID instead, so this is the one place that bridges the two.
 export function getCorridorFid(corridorId) {
 	if (!corridorId) return null;
 
 	const corridorFeature = CORRIDOR_BOUNDARIES.features.find(
-		(feature) => feature.properties.BID === corridorId,
+		(feature) => feature.properties.corridor_name === corridorId,
 	);
 	if (!corridorFeature) return null;
 
