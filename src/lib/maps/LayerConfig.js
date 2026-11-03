@@ -89,6 +89,17 @@ export const CORRIDORS = corridorBoundaries.features
 	}))
 	.sort((a, b) => a.name.localeCompare(b.name));
 
+// Corridor selected when the page first loads. Matched ignoring case and
+// surrounding spaces; null (nothing selected) if no corridor has this name.
+const DEFAULT_CORRIDOR_NAME = "Downtown";
+
+export const DEFAULT_CORRIDOR_ID =
+	CORRIDORS.find(
+		(c) =>
+			String(c.name).trim().toLowerCase() ===
+			DEFAULT_CORRIDOR_NAME.toLowerCase(),
+	)?.id ?? null;
+
 // Catchment-area polygons — one per corridor, carrying the same demographic
 // fields (pop_density_sqmi, median_household_income, etc.) as the demography
 // layer above. Matched to a corridor by FID, same as OAK_CORRIDORS.geo.json.

@@ -54,7 +54,7 @@
 		.filter((g) => g.items.length > 0);
 
 	let {
-		selectedCorridorId = $bindable(null),
+		selectedCorridorId = $bindable('null'),
 		layerState = $bindable({}),
 		corridors = CORRIDORS,
 	} = $props();

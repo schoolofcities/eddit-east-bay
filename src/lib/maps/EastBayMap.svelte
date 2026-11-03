@@ -15,6 +15,7 @@
 		CATCHMENT_BOUNDARIES,
 		CATCHMENT_STYLE,
 		getCatchmentFeature,
+		DEFAULT_CORRIDOR_ID,
 	} from "./LayerConfig.js";
 	import bartLines from "../../data/BART-lines.geo.json";
 	import bartStops from "../../data/BART-stops.geo.json";
@@ -34,7 +35,7 @@
 
 	let {
 		map = $bindable(null),
-		selectedCorridorId = $bindable(null),
+		selectedCorridorId = $bindable(DEFAULT_CORRIDOR_ID),
 		layerState = $bindable({}),
 	} = $props();
 
