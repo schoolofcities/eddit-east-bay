@@ -1,7 +1,7 @@
 <script>
 	
 	let password = '';
-	let isAuthenticated = false;
+	let isAuthenticated = true;
 	const correctPassword = 'eastbay'; 
 
 	function checkPassword() {

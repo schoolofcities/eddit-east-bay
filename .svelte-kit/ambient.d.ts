@@ -31,6 +31,7 @@ declare module '$env/static/private' {
 	export const INIT_CWD: string;
 	export const TERM: string;
 	export const SHELL: string;
+	export const npm_config_allow_scripts: string;
 	export const HOMEBREW_REPOSITORY: string;
 	export const TMPDIR: string;
 	export const npm_config_global_prefix: string;
@@ -44,7 +45,6 @@ declare module '$env/static/private' {
 	export const npm_config_local_prefix: string;
 	export const COPILOT_DEBUG_NONCE: string;
 	export const USER: string;
-	export const VSCODE_LOGIN_INITIALIZED: string;
 	export const COMMAND_MODE: string;
 	export const npm_config_globalconfig: string;
 	export const CLAUDE_CODE_SSE_PORT: string;
@@ -62,6 +62,7 @@ declare module '$env/static/private' {
 	export const __CFBundleIdentifier: string;
 	export const npm_command: string;
 	export const PWD: string;
+	export const JAVA_HOME: string;
 	export const npm_lifecycle_event: string;
 	export const EDITOR: string;
 	export const npm_package_name: string;
@@ -130,6 +131,7 @@ declare module '$env/dynamic/private' {
 		INIT_CWD: string;
 		TERM: string;
 		SHELL: string;
+		npm_config_allow_scripts: string;
 		HOMEBREW_REPOSITORY: string;
 		TMPDIR: string;
 		npm_config_global_prefix: string;
@@ -143,7 +145,6 @@ declare module '$env/dynamic/private' {
 		npm_config_local_prefix: string;
 		COPILOT_DEBUG_NONCE: string;
 		USER: string;
-		VSCODE_LOGIN_INITIALIZED: string;
 		COMMAND_MODE: string;
 		npm_config_globalconfig: string;
 		CLAUDE_CODE_SSE_PORT: string;
@@ -161,6 +162,7 @@ declare module '$env/dynamic/private' {
 		__CFBundleIdentifier: string;
 		npm_command: string;
 		PWD: string;
+		JAVA_HOME: string;
 		npm_lifecycle_event: string;
 		EDITOR: string;
 		npm_package_name: string;

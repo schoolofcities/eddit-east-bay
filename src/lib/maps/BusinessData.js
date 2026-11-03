@@ -1,14 +1,5 @@
 import { base } from "$app/paths";
 
-// Business-composition distributions, one CSV per breakdown, each shaped
-// like: FID, BID, <category columns...> — with one row per corridor and
-// each category column holding a % share for that corridor. These files
-// live in /static, so (unlike LayerConfig's build-time geojson imports)
-// they're fetched at runtime and parsed here, then cached in memory.
-//
-// Joined to a corridor the same way the catchment-area polygons are: by
-// FID, resolved from the selected BID via LayerConfig's getCorridorFid.
-
 export const BUSINESS_DISTRIBUTION_DATASETS = [
 	{
 		id: "sector",
