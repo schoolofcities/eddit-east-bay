@@ -100,6 +100,13 @@ export const DEFAULT_CORRIDOR_ID =
 			DEFAULT_CORRIDOR_NAME.toLowerCase(),
 	)?.id ?? null;
 
+// Picks a corridor at random. Call this on the client (e.g. in onMount) rather
+// than at module load, so the server render and the hydrated page agree.
+export function getRandomCorridorId() {
+	if (CORRIDORS.length === 0) return null;
+	return CORRIDORS[Math.floor(Math.random() * CORRIDORS.length)].id;
+}
+
 // Catchment-area polygons — one per corridor, carrying the same demographic
 // fields (pop_density_sqmi, median_household_income, etc.) as the demography
 // layer above. Matched to a corridor by FID, same as OAK_CORRIDORS.geo.json.
@@ -109,9 +116,12 @@ export const CATCHMENT_BOUNDARIES = catchmentBoundaries;
 // and the panel's legend swatch always describe the same color.
 export const CATCHMENT_STYLE = {
 	fillColor: "#87BE96",
-	fillOpacity: 0.2,
-	outlineColor: "#2F4B61",
-	outlineWidth: 0,
+	fillOpacity: 0.15,
+	outlineColor: "#2C683D",
+	outlineWidth: 1.5,
+	// Dot pattern in units of line width: a short dash, then a gap. With the
+	// round line cap on the map layer, these render as dots.
+	outlineDasharray: [1, 3],
 };
 
 // Shared corridor_name → FID resolution. selectedCorridorId is a
