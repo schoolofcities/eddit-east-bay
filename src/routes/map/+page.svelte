@@ -6,12 +6,21 @@
     import EastBayMap from "$lib/maps/EastBayMap.svelte";
     import EastBayPanel from "$lib/maps/EastBayPanel.svelte";
 
-    import { makeInitialLayerState } from "../../lib/maps/LayerConfig.js";
+    import { onMount } from "svelte";
+    import {
+        makeInitialLayerState,
+        getRandomCorridorId,
+    } from "../../lib/maps/LayerConfig.js";
     import corridorPolygons from '../../data/OAK_BIDs.geo.json';
 
     let map = $state(null);
     let selectedCorridorId = $state(null);
     let layerState = $state(makeInitialLayerState());
+
+    // Select a random corridor once the page is running in the browser.
+    onMount(() => {
+        selectedCorridorId = getRandomCorridorId();
+    });
 
     const corridors = corridorPolygons.features
         .map((f) => ({

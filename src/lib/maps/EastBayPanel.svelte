@@ -848,7 +848,7 @@
 		flex-shrink: 0;
 		width: 20px;
 		height: 14px;
-		border: 1px solid; /* color set inline via CATCHMENT_STYLE */
+		border: 2px dotted; /* color set inline via CATCHMENT_STYLE */
 		border-radius: 2px;
 		overflow: hidden;
 		background: #fff;

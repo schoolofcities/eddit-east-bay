@@ -15,7 +15,6 @@
 		CATCHMENT_BOUNDARIES,
 		CATCHMENT_STYLE,
 		getCatchmentFeature,
-		DEFAULT_CORRIDOR_ID,
 	} from "./LayerConfig.js";
 	import bartLines from "../../data/BART-lines.geo.json";
 	import bartStops from "../../data/BART-stops.geo.json";
@@ -31,11 +30,24 @@
 	import basemapLayers from "$lib/maps/neutral-grey.json";
 
 	const OAK_GREEN = "#2C683D";
+
+	// Unselected corridors: dark grey outline, grey fill.
+	const CORRIDOR_OUTLINE = "#444444";
+	const CORRIDOR_FILL = "#808080";
+
+	// Corridor outline widths: normal, and while the pointer is over it.
+	const CORRIDOR_LINE_WIDTH = 1;
+	const CORRIDOR_LINE_WIDTH_HOVER = 2;
+	const SELECTED_LINE_WIDTH = 2;
+	const SELECTED_LINE_WIDTH_HOVER = 2.5;
+
+	// True for the corridor the pointer is over (set via feature-state).
+	const IS_HOVERED = ["boolean", ["feature-state", "hover"], false];
 	const OAK_ACCENT = "#EAC555";
 
 	let {
 		map = $bindable(null),
-		selectedCorridorId = $bindable(DEFAULT_CORRIDOR_ID),
+		selectedCorridorId = $bindable(null),
 		layerState = $bindable({}),
 	} = $props();
 
@@ -174,6 +186,8 @@
 		map.addSource("corridors", {
 			type: "geojson",
 			data: CORRIDOR_BOUNDARIES,
+			// Lets setFeatureState target a corridor by name (used for hover).
+			promoteId: "corridor_name",
 		});
 
 		map.addLayer({
@@ -181,8 +195,8 @@
 			type: "fill",
 			source: "corridors",
 			paint: {
-				"fill-color": OAK_GREEN,
-				"fill-opacity": 0.08,
+				"fill-color": CORRIDOR_FILL,
+				"fill-opacity": 0.15,
 			},
 		});
 
@@ -191,9 +205,14 @@
 			type: "line",
 			source: "corridors",
 			paint: {
-				"line-color": OAK_GREEN,
-				"line-width": 1.5,
-				"line-opacity": 0.7,
+				"line-color": CORRIDOR_OUTLINE,
+				"line-width": [
+					"case",
+					IS_HOVERED,
+					CORRIDOR_LINE_WIDTH_HOVER,
+					CORRIDOR_LINE_WIDTH,
+				],
+				"line-opacity": 1,
 			},
 		});
 
@@ -216,9 +235,29 @@
 				className: "corridor-hover-popup",
 			});
 
+			// Corridor currently marked hovered, so it can be cleared later.
+			let hoveredCorridorId = null;
+			const setHovered = (id) => {
+				if (id === hoveredCorridorId) return;
+				if (hoveredCorridorId !== null) {
+					map.setFeatureState(
+						{ source: "corridors", id: hoveredCorridorId },
+						{ hover: false },
+					);
+				}
+				hoveredCorridorId = id;
+				if (id !== null) {
+					map.setFeatureState(
+						{ source: "corridors", id },
+						{ hover: true },
+					);
+				}
+			};
+
 			map.on("mousemove", "corridor-fill", (e) => {
 				map.getCanvas().style.cursor = "pointer";
 				const f = e.features[0];
+				setHovered(f.id ?? null);
 				hoverPopup
 					.setLngLat(e.lngLat)
 					.setHTML(`<span>${f.properties.corridor_name}</span>`)
@@ -227,6 +266,7 @@
 			map.on("mouseleave", "corridor-fill", () => {
 				map.getCanvas().style.cursor = "";
 				hoverPopup.remove();
+				setHovered(null);
 			});
 		} else {
 			map.on("mouseenter", "corridor-fill", () => {
@@ -273,15 +313,21 @@
 				paint: {
 					"line-color": CATCHMENT_STYLE.outlineColor,
 					"line-width": CATCHMENT_STYLE.outlineWidth,
+					"line-dasharray": CATCHMENT_STYLE.outlineDasharray,
 					"line-opacity": 0.85,
 				},
-				layout: { visibility: "none" },
+				layout: {
+					visibility: "none",
+					"line-cap": "round",
+					"line-join": "round",
+				},
 			},
 			"corridor-fill",
 		);
 	}
 
-	function getCorridorCenter(feature) {
+	// [[west, south], [east, north]] around every coordinate in a feature.
+	function getFeatureBounds(feature) {
 		let minX = Infinity;
 		let minY = Infinity;
 		let maxX = -Infinity;
@@ -300,7 +346,10 @@
 		};
 		visit(feature.geometry.coordinates);
 
-		return [(minX + maxX) / 2, (minY + maxY) / 2];
+		return [
+			[minX, minY],
+			[maxX, maxY],
+		];
 	}
 
 	function addBartLayers() {
@@ -932,19 +981,24 @@
 		}
 	}
 
-	// Ease the map to the selected corridor's center
+	// Ease the map to fit the selected corridor's catchment area. Falls back
+	// to the corridor's own boundary if it has no catchment polygon.
+	// cameraForBounds works out the center/zoom that fits the extent, and
+	// easeTo moves there directly (fitBounds would use a flyTo-style arc).
 	$effect(() => {
-		if (!selectedCorridorId || !mapLoaded) return;
-		const feature = CORRIDOR_BOUNDARIES.features.find(
-			(f) => f.properties.corridor_name === selectedCorridorId,
-		);
-		if (feature) {
-			map?.easeTo({
-				center: getCorridorCenter(feature),
-				zoom: 14,
-				duration: 800,
-			});
-		}
+		if (!selectedCorridorId || !mapLoaded || !map) return;
+		const feature =
+			getCatchmentFeature(selectedCorridorId) ??
+			CORRIDOR_BOUNDARIES.features.find(
+				(f) => f.properties.corridor_name === selectedCorridorId,
+			);
+		if (!feature) return;
+
+		const camera = map.cameraForBounds(getFeatureBounds(feature), {
+			padding: 40,
+			maxZoom: 16,
+		});
+		if (camera) map.easeTo(camera);
 	});
 
 	// Catchment-area underlay only ever shows the selected corridor's own
@@ -965,33 +1019,48 @@
 		}
 	});
 
-	// Outline/highlight the selected corridor's boundary.
+	// Outline/highlight the selected corridor's boundary. While a corridor is
+	// selected, the others fade back so the selection stands out; with
+	// nothing selected, every corridor uses the normal strength.
 	$effect(() => {
 		if (!mapLoaded) return;
 		const selected = selectedCorridorId ?? "";
-		const colorExpr = [
-			"case",
-			["==", ["get", "corridor_name"], selected],
-			"#DC4633",
-			OAK_GREEN,
-		];
+		const hasSelection = Boolean(selectedCorridorId);
+		const isSelected = ["==", ["get", "corridor_name"], selected];
+
+		// Unselected corridor strength: faded while something is selected.
+		const otherFillOpacity = hasSelection ? 0.06 : 0.15;
+		const otherLineOpacity = hasSelection ? 0.4 : 1;
+
+		// Selected corridor stays red; the rest get the black/grey styling.
+		const fillColorExpr = ["case", isSelected, "#DC4633", CORRIDOR_FILL];
+		const lineColorExpr = ["case", isSelected, "#DC4633", CORRIDOR_OUTLINE];
 
 		if (map?.getLayer("corridor-fill")) {
-			map.setPaintProperty("corridor-fill", "fill-color", colorExpr);
+			map.setPaintProperty("corridor-fill", "fill-color", fillColorExpr);
 			map.setPaintProperty("corridor-fill", "fill-opacity", [
 				"case",
 				["==", ["get", "corridor_name"], selected],
 				0.2,
-				0.08,
+				otherFillOpacity,
 			]);
 		}
 		if (map?.getLayer("corridor-outline")) {
-			map.setPaintProperty("corridor-outline", "line-color", colorExpr);
+			map.setPaintProperty("corridor-outline", "line-color", lineColorExpr);
 			map.setPaintProperty("corridor-outline", "line-width", [
 				"case",
-				["==", ["get", "corridor_name"], selected],
-				2,
+				isSelected,
+				["case", IS_HOVERED, SELECTED_LINE_WIDTH_HOVER, SELECTED_LINE_WIDTH],
+				["case", IS_HOVERED, CORRIDOR_LINE_WIDTH_HOVER, CORRIDOR_LINE_WIDTH],
+			]);
+			// A hovered corridor comes back to full strength so it's easy to spot.
+			map.setPaintProperty("corridor-outline", "line-opacity", [
+				"case",
+				isSelected,
+				0.9,
+				IS_HOVERED,
 				1,
+				otherLineOpacity,
 			]);
 		}
 	});
