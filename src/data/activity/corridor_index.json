@@ -1,0 +1,380 @@
+[
+  {
+    "id": "downtown",
+    "name": "Downtown",
+    "map_name": "Downtown",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.271957,
+      37.803623
+    ],
+    "primary_district": 3,
+    "area_hectares": 41.74,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_downtown.json",
+      "S1": "corridor_home_origin_s1/corridor_downtown.json",
+      "S3": "corridor_home_origin_s3/corridor_downtown.json"
+    }
+  },
+  {
+    "id": "chinatown",
+    "name": "Chinatown",
+    "map_name": "Chinatown",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.267131,
+      37.799125
+    ],
+    "primary_district": 2,
+    "area_hectares": 61.55,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_chinatown.json",
+      "S1": "corridor_home_origin_s1/corridor_chinatown.json",
+      "S3": "corridor_home_origin_s3/corridor_chinatown.json"
+    }
+  },
+  {
+    "id": "lake_merritt",
+    "name": "Lake Merritt",
+    "map_name": "Lake Merritt",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.265853,
+      37.810102
+    ],
+    "primary_district": 3,
+    "area_hectares": 57.54,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_lake_merritt.json",
+      "S1": "corridor_home_origin_s1/corridor_lake_merritt.json",
+      "S3": "corridor_home_origin_s3/corridor_lake_merritt.json"
+    }
+  },
+  {
+    "id": "koreatown_northgate",
+    "name": "Koreatown/Northgate",
+    "map_name": "Koreatown/Northgate",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.26858,
+      37.814743
+    ],
+    "primary_district": 3,
+    "area_hectares": 35.74,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_koreatown_northgate.json",
+      "S1": "corridor_home_origin_s1/corridor_koreatown_northgate.json",
+      "S3": "corridor_home_origin_s3/corridor_koreatown_northgate.json"
+    }
+  },
+  {
+    "id": "montclair",
+    "name": "Montclair",
+    "map_name": "Montclair",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.209869,
+      37.827025
+    ],
+    "primary_district": 4,
+    "area_hectares": 4.56,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_montclair.json",
+      "S1": "corridor_home_origin_s1/corridor_montclair.json",
+      "S3": "corridor_home_origin_s3/corridor_montclair.json"
+    }
+  },
+  {
+    "id": "rockridge",
+    "name": "Rockridge",
+    "map_name": "Rockridge",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.251875,
+      37.843274
+    ],
+    "primary_district": 1,
+    "area_hectares": 13.3,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_rockridge.json",
+      "S1": "corridor_home_origin_s1/corridor_rockridge.json",
+      "S3": "corridor_home_origin_s3/corridor_rockridge.json"
+    }
+  },
+  {
+    "id": "temescal_telegraph",
+    "name": "Temescal/Telegraph",
+    "map_name": "Temescal/Telegraph",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.262765,
+      37.83639
+    ],
+    "primary_district": 1,
+    "area_hectares": 49.16,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_temescal_telegraph.json",
+      "S1": "corridor_home_origin_s1/corridor_temescal_telegraph.json",
+      "S3": "corridor_home_origin_s3/corridor_temescal_telegraph.json"
+    }
+  },
+  {
+    "id": "fruitvale",
+    "name": "Fruitvale",
+    "map_name": "Fruitvale",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.221424,
+      37.778435
+    ],
+    "primary_district": 5,
+    "area_hectares": 38.73,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_fruitvale.json",
+      "S1": "corridor_home_origin_s1/corridor_fruitvale.json",
+      "S3": "corridor_home_origin_s3/corridor_fruitvale.json"
+    }
+  },
+  {
+    "id": "lakeshore",
+    "name": "Lakeshore",
+    "map_name": "Lakeshore",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.244471,
+      37.81071
+    ],
+    "primary_district": 2,
+    "area_hectares": 4.67,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_lakeshore.json",
+      "S1": "corridor_home_origin_s1/corridor_lakeshore.json",
+      "S3": "corridor_home_origin_s3/corridor_lakeshore.json"
+    }
+  },
+  {
+    "id": "jack_london",
+    "name": "Jack London",
+    "map_name": "Jack London",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.273917,
+      37.795545
+    ],
+    "primary_district": 3,
+    "area_hectares": 84.59,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_jack_london.json",
+      "S1": "corridor_home_origin_s1/corridor_jack_london.json",
+      "S3": "corridor_home_origin_s3/corridor_jack_london.json"
+    }
+  },
+  {
+    "id": "laurel",
+    "name": "Laurel",
+    "map_name": "Laurel",
+    "in_map": true,
+    "corridor_set": 1,
+    "centroid": [
+      -122.197906,
+      37.790668
+    ],
+    "primary_district": 4,
+    "area_hectares": 8.85,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_laurel.json",
+      "S1": "corridor_home_origin_s1/corridor_laurel.json",
+      "S3": "corridor_home_origin_s3/corridor_laurel.json"
+    }
+  },
+  {
+    "id": "old_oakland",
+    "name": "Old Oakland",
+    "map_name": "Old Oakland",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.274578,
+      37.801373
+    ],
+    "primary_district": 3,
+    "area_hectares": 6.5,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_old_oakland.json",
+      "S1": "corridor_home_origin_s1/corridor_old_oakland.json",
+      "S3": "corridor_home_origin_s3/corridor_old_oakland.json"
+    }
+  },
+  {
+    "id": "little_saigon",
+    "name": "Little Saigon",
+    "map_name": "Little Saigon",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.25175,
+      37.793904
+    ],
+    "primary_district": 2,
+    "area_hectares": 27.87,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_little_saigon.json",
+      "S1": "corridor_home_origin_s1/corridor_little_saigon.json",
+      "S3": "corridor_home_origin_s3/corridor_little_saigon.json"
+    }
+  },
+  {
+    "id": "dimond",
+    "name": "Dimond",
+    "map_name": "Dimond\u00a0",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.216868,
+      37.800084
+    ],
+    "primary_district": 4,
+    "area_hectares": 9.62,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_dimond.json",
+      "S1": "corridor_home_origin_s1/corridor_dimond.json",
+      "S3": "corridor_home_origin_s3/corridor_dimond.json"
+    }
+  },
+  {
+    "id": "havencourt",
+    "name": "Havencourt",
+    "map_name": "Havencourt",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.194183,
+      37.76408
+    ],
+    "primary_district": 6,
+    "area_hectares": 87.47,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_havencourt.json",
+      "S1": "corridor_home_origin_s1/corridor_havencourt.json",
+      "S3": "corridor_home_origin_s3/corridor_havencourt.json"
+    }
+  },
+  {
+    "id": "elmhurst",
+    "name": "Elmhurst",
+    "map_name": "Elmhurst",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.181889,
+      37.749692
+    ],
+    "primary_district": 7,
+    "area_hectares": 106.27,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_elmhurst.json",
+      "S1": "corridor_home_origin_s1/corridor_elmhurst.json",
+      "S3": "corridor_home_origin_s3/corridor_elmhurst.json"
+    }
+  },
+  {
+    "id": "uptown_arts_and_entertainment_district",
+    "name": "Uptown Arts & Entertainment District",
+    "map_name": "Uptown Arts & Entertainment District",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.269155,
+      37.808754
+    ],
+    "primary_district": 3,
+    "area_hectares": 3.06,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_uptown_arts_and_entertainment_district.json",
+      "S1": "corridor_home_origin_s1/corridor_uptown_arts_and_entertainment_district.json",
+      "S3": "corridor_home_origin_s3/corridor_uptown_arts_and_entertainment_district.json"
+    }
+  },
+  {
+    "id": "northlake",
+    "name": "Northlake",
+    "map_name": "Northlake",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.263909,
+      37.812859
+    ],
+    "primary_district": 3,
+    "area_hectares": 10.78,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_northlake.json",
+      "S1": "corridor_home_origin_s1/corridor_northlake.json",
+      "S3": "corridor_home_origin_s3/corridor_northlake.json"
+    }
+  },
+  {
+    "id": "bambd",
+    "name": "BAMBD",
+    "map_name": "BAMBD",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.282049,
+      37.807494
+    ],
+    "primary_district": 3,
+    "area_hectares": 56.41,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_bambd.json",
+      "S1": "corridor_home_origin_s1/corridor_bambd.json",
+      "S3": "corridor_home_origin_s3/corridor_bambd.json"
+    }
+  },
+  {
+    "id": "7th_st_thrives",
+    "name": "7th St Thrives",
+    "map_name": "7th St Thrives",
+    "in_map": true,
+    "corridor_set": 2,
+    "centroid": [
+      -122.292584,
+      37.804951
+    ],
+    "primary_district": 3,
+    "area_hectares": 33.15,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_7th_st_thrives.json",
+      "S1": "corridor_home_origin_s1/corridor_7th_st_thrives.json",
+      "S3": "corridor_home_origin_s3/corridor_7th_st_thrives.json"
+    }
+  },
+  {
+    "id": "hegenberger",
+    "name": "Hegenberger",
+    "map_name": null,
+    "in_map": false,
+    "corridor_set": 2,
+    "centroid": [
+      -122.197415,
+      37.742034
+    ],
+    "primary_district": 7,
+    "area_hectares": 351.61,
+    "origin_files": {
+      "pooled": "corridor_home_origin/corridor_hegenberger.json",
+      "S1": "corridor_home_origin_s1/corridor_hegenberger.json",
+      "S3": "corridor_home_origin_s3/corridor_hegenberger.json"
+    }
+  }
+]

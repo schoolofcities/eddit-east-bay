@@ -40,3 +40,6 @@ npm-debug.log*
 # File types
 *.gpkg-*
 *.qmd
+
+# TIGER2019 block-group shapefile (downloaded by analysis/activity/02_bg_crosswalk_and_districts.ipynb)
+data/geo/tiger2019_bg
