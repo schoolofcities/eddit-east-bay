@@ -1,14 +1,15 @@
 {
   ".svelte-kit/generated/client-optimized/app.js": {
-    "file": "_app/immutable/entry/app.DPNzlWBv.js",
+    "file": "_app/immutable/entry/app.DVg_qosP.js",
     "name": "entry/app",
     "src": ".svelte-kit/generated/client-optimized/app.js",
     "isEntry": true,
     "imports": [
-      "_Io8RqZ5S.js",
-      "_DLzypJ_d.js",
+      "_D9Z9MdNV.js",
+      "_CoPL-fNc.js",
+      "_ncTuHAue.js",
       "_NZTpNUN0.js",
-      "_CFrxUXj8.js"
+      "_Bew7WIJr.js"
     ],
     "dynamicImports": [
       ".svelte-kit/generated/client-optimized/nodes/0.js",
@@ -19,54 +20,54 @@
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/0.js": {
-    "file": "_app/immutable/nodes/0.vLFx5l5r.js",
+    "file": "_app/immutable/nodes/0.DBqsficT.js",
     "name": "nodes/0",
     "src": ".svelte-kit/generated/client-optimized/nodes/0.js",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
-      "_D26OK1GW.js"
+      "_Dxkvvq6T.js"
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/1.js": {
-    "file": "_app/immutable/nodes/1.DDAjIReA.js",
+    "file": "_app/immutable/nodes/1.BbJJfYMJ.js",
     "name": "nodes/1",
     "src": ".svelte-kit/generated/client-optimized/nodes/1.js",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_NZTpNUN0.js",
-      "_BwhBdgBp.js",
-      "_Io8RqZ5S.js",
-      "_DLzypJ_d.js",
-      "_BcjjiVb1.js",
-      "_Dg0jWt2U.js"
+      "__HcXsE8W.js",
+      "_CoPL-fNc.js",
+      "_ncTuHAue.js",
+      "_B9ZX5rgo.js",
+      "_DVdFOwWe.js"
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/2.js": {
-    "file": "_app/immutable/nodes/2.vLFx5l5r.js",
+    "file": "_app/immutable/nodes/2.DBqsficT.js",
     "name": "nodes/2",
     "src": ".svelte-kit/generated/client-optimized/nodes/2.js",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
-      "_D26OK1GW.js"
+      "_Dxkvvq6T.js"
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/3.js": {
-    "file": "_app/immutable/nodes/3.ChxQv-xa.js",
+    "file": "_app/immutable/nodes/3.CjQETh05.js",
     "name": "nodes/3",
     "src": ".svelte-kit/generated/client-optimized/nodes/3.js",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_NZTpNUN0.js",
-      "_BwhBdgBp.js",
-      "_Io8RqZ5S.js",
-      "_DLzypJ_d.js",
-      "_BcjjiVb1.js",
-      "_BzWBwM8t.js",
-      "_CFrxUXj8.js"
+      "__HcXsE8W.js",
+      "_CoPL-fNc.js",
+      "_ncTuHAue.js",
+      "_B9ZX5rgo.js",
+      "_p2e_w0cs.js",
+      "_Bew7WIJr.js"
     ],
     "css": [
       "_app/immutable/assets/3.Bpie9v3_.css"
@@ -79,44 +80,183 @@
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/4.js": {
-    "file": "_app/immutable/nodes/4.CIq9WX-7.js",
+    "file": "_app/immutable/nodes/4.R3Vc2xHk.js",
     "name": "nodes/4",
     "src": ".svelte-kit/generated/client-optimized/nodes/4.js",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_NZTpNUN0.js",
-      "_Io8RqZ5S.js",
-      "_DLzypJ_d.js",
-      "_BwhBdgBp.js",
-      "_CFrxUXj8.js",
-      "_BzWBwM8t.js",
-      "_Cmrpo6if.js"
+      "_ncTuHAue.js",
+      "_CoPL-fNc.js",
+      "__HcXsE8W.js",
+      "_Bew7WIJr.js",
+      "_p2e_w0cs.js",
+      "_D9Z9MdNV.js",
+      "_FuETYIb1.js"
+    ],
+    "dynamicImports": [
+      "src/data/activity/corridor_meta.json",
+      "src/data/activity/corridor_metrics/7th_st_thrives.json",
+      "src/data/activity/corridor_metrics/bambd.json",
+      "src/data/activity/corridor_metrics/chinatown.json",
+      "src/data/activity/corridor_metrics/dimond.json",
+      "src/data/activity/corridor_metrics/downtown.json",
+      "src/data/activity/corridor_metrics/elmhurst.json",
+      "src/data/activity/corridor_metrics/fruitvale.json",
+      "src/data/activity/corridor_metrics/havencourt.json",
+      "src/data/activity/corridor_metrics/hegenberger.json",
+      "src/data/activity/corridor_metrics/jack_london.json",
+      "src/data/activity/corridor_metrics/koreatown_northgate.json",
+      "src/data/activity/corridor_metrics/lake_merritt.json",
+      "src/data/activity/corridor_metrics/lakeshore.json",
+      "src/data/activity/corridor_metrics/laurel.json",
+      "src/data/activity/corridor_metrics/little_saigon.json",
+      "src/data/activity/corridor_metrics/montclair.json",
+      "src/data/activity/corridor_metrics/northlake.json",
+      "src/data/activity/corridor_metrics/old_oakland.json",
+      "src/data/activity/corridor_metrics/rockridge.json",
+      "src/data/activity/corridor_metrics/temescal_telegraph.json",
+      "src/data/activity/corridor_metrics/uptown_arts_and_entertainment_district.json",
+      "src/data/activity/corridor_home_origin/corridor_7th_st_thrives.json",
+      "src/data/activity/corridor_home_origin/corridor_bambd.json",
+      "src/data/activity/corridor_home_origin/corridor_chinatown.json",
+      "src/data/activity/corridor_home_origin/corridor_dimond.json",
+      "src/data/activity/corridor_home_origin/corridor_downtown.json",
+      "src/data/activity/corridor_home_origin/corridor_elmhurst.json",
+      "src/data/activity/corridor_home_origin/corridor_fruitvale.json",
+      "src/data/activity/corridor_home_origin/corridor_havencourt.json",
+      "src/data/activity/corridor_home_origin/corridor_hegenberger.json",
+      "src/data/activity/corridor_home_origin/corridor_jack_london.json",
+      "src/data/activity/corridor_home_origin/corridor_koreatown_northgate.json",
+      "src/data/activity/corridor_home_origin/corridor_lake_merritt.json",
+      "src/data/activity/corridor_home_origin/corridor_lakeshore.json",
+      "src/data/activity/corridor_home_origin/corridor_laurel.json",
+      "src/data/activity/corridor_home_origin/corridor_little_saigon.json",
+      "src/data/activity/corridor_home_origin/corridor_montclair.json",
+      "src/data/activity/corridor_home_origin/corridor_northlake.json",
+      "src/data/activity/corridor_home_origin/corridor_old_oakland.json",
+      "src/data/activity/corridor_home_origin/corridor_rockridge.json",
+      "src/data/activity/corridor_home_origin/corridor_temescal_telegraph.json",
+      "src/data/activity/corridor_home_origin/corridor_uptown_arts_and_entertainment_district.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_7th_st_thrives.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_bambd.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_chinatown.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_dimond.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_downtown.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_elmhurst.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_fruitvale.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_havencourt.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_hegenberger.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_jack_london.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_koreatown_northgate.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_lake_merritt.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_lakeshore.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_laurel.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_little_saigon.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_montclair.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_northlake.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_old_oakland.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_rockridge.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_temescal_telegraph.json",
+      "src/data/activity/corridor_home_origin_s1/corridor_uptown_arts_and_entertainment_district.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_7th_st_thrives.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_bambd.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_chinatown.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_dimond.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_downtown.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_elmhurst.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_fruitvale.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_havencourt.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_hegenberger.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_jack_london.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_koreatown_northgate.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_lake_merritt.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_lakeshore.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_laurel.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_little_saigon.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_montclair.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_northlake.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_old_oakland.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_rockridge.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_temescal_telegraph.json",
+      "src/data/activity/corridor_home_origin_s3/corridor_uptown_arts_and_entertainment_district.json"
     ],
     "css": [
-      "_app/immutable/assets/4.CM94L9hZ.css"
+      "_app/immutable/assets/4.C1PIr5-P.css"
     ]
   },
-  "_BcjjiVb1.js": {
-    "file": "_app/immutable/chunks/BcjjiVb1.js",
+  "_B9ZX5rgo.js": {
+    "file": "_app/immutable/chunks/B9ZX5rgo.js",
     "name": "lifecycle",
     "imports": [
-      "_Io8RqZ5S.js"
+      "_CoPL-fNc.js"
     ]
   },
-  "_BwhBdgBp.js": {
-    "file": "_app/immutable/chunks/BwhBdgBp.js",
+  "_Bew7WIJr.js": {
+    "file": "_app/immutable/chunks/Bew7WIJr.js",
+    "name": "props",
+    "imports": [
+      "_CoPL-fNc.js"
+    ]
+  },
+  "_CoPL-fNc.js": {
+    "file": "_app/immutable/chunks/CoPL-fNc.js",
+    "name": "snippet"
+  },
+  "_D9Z9MdNV.js": {
+    "file": "_app/immutable/chunks/D9Z9MdNV.js",
+    "name": "preload-helper"
+  },
+  "_DVdFOwWe.js": {
+    "file": "_app/immutable/chunks/DVdFOwWe.js",
+    "name": "entry",
+    "imports": [
+      "_ncTuHAue.js",
+      "_CoPL-fNc.js",
+      "_FuETYIb1.js"
+    ]
+  },
+  "_Dxkvvq6T.js": {
+    "file": "_app/immutable/chunks/Dxkvvq6T.js",
+    "name": "layout",
+    "imports": [
+      "_NZTpNUN0.js",
+      "_CoPL-fNc.js"
+    ]
+  },
+  "_FuETYIb1.js": {
+    "file": "_app/immutable/chunks/FuETYIb1.js",
+    "name": "paths"
+  },
+  "_NZTpNUN0.js": {
+    "file": "_app/immutable/chunks/NZTpNUN0.js",
+    "name": "disclose-version"
+  },
+  "__HcXsE8W.js": {
+    "file": "_app/immutable/chunks/_HcXsE8W.js",
     "name": "legacy",
     "imports": [
-      "_Io8RqZ5S.js"
+      "_CoPL-fNc.js"
     ]
   },
-  "_BzWBwM8t.js": {
-    "file": "_app/immutable/chunks/BzWBwM8t.js",
+  "_global-styles.BIOsdUqe.css": {
+    "file": "_app/immutable/assets/global-styles.BIOsdUqe.css",
+    "src": "_global-styles.BIOsdUqe.css"
+  },
+  "_ncTuHAue.js": {
+    "file": "_app/immutable/chunks/ncTuHAue.js",
+    "name": "index-client",
+    "imports": [
+      "_CoPL-fNc.js"
+    ]
+  },
+  "_p2e_w0cs.js": {
+    "file": "_app/immutable/chunks/p2e_w0cs.js",
     "name": "global-styles",
     "imports": [
-      "_Io8RqZ5S.js",
-      "_DLzypJ_d.js"
+      "_CoPL-fNc.js",
+      "_ncTuHAue.js"
     ],
     "css": [
       "_app/immutable/assets/global-styles.BIOsdUqe.css"
@@ -138,60 +278,13 @@
       "_app/immutable/assets/OpenSans-BoldItalic.DDyywkPM.ttf"
     ]
   },
-  "_CFrxUXj8.js": {
-    "file": "_app/immutable/chunks/CFrxUXj8.js",
-    "name": "props",
-    "imports": [
-      "_Io8RqZ5S.js"
-    ]
-  },
-  "_Cmrpo6if.js": {
-    "file": "_app/immutable/chunks/Cmrpo6if.js",
-    "name": "paths"
-  },
-  "_D26OK1GW.js": {
-    "file": "_app/immutable/chunks/D26OK1GW.js",
-    "name": "layout",
-    "imports": [
-      "_NZTpNUN0.js",
-      "_Io8RqZ5S.js"
-    ]
-  },
-  "_DLzypJ_d.js": {
-    "file": "_app/immutable/chunks/DLzypJ_d.js",
-    "name": "index-client",
-    "imports": [
-      "_Io8RqZ5S.js"
-    ]
-  },
-  "_Dg0jWt2U.js": {
-    "file": "_app/immutable/chunks/Dg0jWt2U.js",
-    "name": "entry",
-    "imports": [
-      "_DLzypJ_d.js",
-      "_Io8RqZ5S.js",
-      "_Cmrpo6if.js"
-    ]
-  },
-  "_Io8RqZ5S.js": {
-    "file": "_app/immutable/chunks/Io8RqZ5S.js",
-    "name": "snippet"
-  },
-  "_NZTpNUN0.js": {
-    "file": "_app/immutable/chunks/NZTpNUN0.js",
-    "name": "disclose-version"
-  },
-  "_global-styles.BIOsdUqe.css": {
-    "file": "_app/immutable/assets/global-styles.BIOsdUqe.css",
-    "src": "_global-styles.BIOsdUqe.css"
-  },
   "node_modules/@sveltejs/kit/src/runtime/client/entry.js": {
-    "file": "_app/immutable/entry/start.DGOExqGT.js",
+    "file": "_app/immutable/entry/start.Ci72mIC8.js",
     "name": "entry/start",
     "src": "node_modules/@sveltejs/kit/src/runtime/client/entry.js",
     "isEntry": true,
     "imports": [
-      "_Dg0jWt2U.js"
+      "_DVdFOwWe.js"
     ]
   },
   "src/assets/fonts/OpenSans-Bold.ttf": {
@@ -265,5 +358,515 @@
   "src/assets/sofc-uoft-logo-white.svg": {
     "file": "_app/immutable/assets/sofc-uoft-logo-white.DQHODoDx.svg",
     "src": "src/assets/sofc-uoft-logo-white.svg"
+  },
+  "src/data/activity/corridor_home_origin/corridor_7th_st_thrives.json": {
+    "file": "_app/immutable/chunks/DPlHUw69.js",
+    "name": "corridor_7th_st_thrives",
+    "src": "src/data/activity/corridor_home_origin/corridor_7th_st_thrives.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_bambd.json": {
+    "file": "_app/immutable/chunks/D_aqgzy6.js",
+    "name": "corridor_bambd",
+    "src": "src/data/activity/corridor_home_origin/corridor_bambd.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_chinatown.json": {
+    "file": "_app/immutable/chunks/m8F4ncxJ.js",
+    "name": "corridor_chinatown",
+    "src": "src/data/activity/corridor_home_origin/corridor_chinatown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_dimond.json": {
+    "file": "_app/immutable/chunks/BdynsMSH.js",
+    "name": "corridor_dimond",
+    "src": "src/data/activity/corridor_home_origin/corridor_dimond.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_downtown.json": {
+    "file": "_app/immutable/chunks/CHasPbu7.js",
+    "name": "corridor_downtown",
+    "src": "src/data/activity/corridor_home_origin/corridor_downtown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_elmhurst.json": {
+    "file": "_app/immutable/chunks/B-qgGFlb.js",
+    "name": "corridor_elmhurst",
+    "src": "src/data/activity/corridor_home_origin/corridor_elmhurst.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_fruitvale.json": {
+    "file": "_app/immutable/chunks/CI279dYU.js",
+    "name": "corridor_fruitvale",
+    "src": "src/data/activity/corridor_home_origin/corridor_fruitvale.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_havencourt.json": {
+    "file": "_app/immutable/chunks/B5rCkiKo.js",
+    "name": "corridor_havencourt",
+    "src": "src/data/activity/corridor_home_origin/corridor_havencourt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_hegenberger.json": {
+    "file": "_app/immutable/chunks/BAzMqd2S.js",
+    "name": "corridor_hegenberger",
+    "src": "src/data/activity/corridor_home_origin/corridor_hegenberger.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_jack_london.json": {
+    "file": "_app/immutable/chunks/B3vVSa0j.js",
+    "name": "corridor_jack_london",
+    "src": "src/data/activity/corridor_home_origin/corridor_jack_london.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_koreatown_northgate.json": {
+    "file": "_app/immutable/chunks/Bh_mqJ91.js",
+    "name": "corridor_koreatown_northgate",
+    "src": "src/data/activity/corridor_home_origin/corridor_koreatown_northgate.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_lake_merritt.json": {
+    "file": "_app/immutable/chunks/CJM1B6MJ.js",
+    "name": "corridor_lake_merritt",
+    "src": "src/data/activity/corridor_home_origin/corridor_lake_merritt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_lakeshore.json": {
+    "file": "_app/immutable/chunks/Bx3X9YSC.js",
+    "name": "corridor_lakeshore",
+    "src": "src/data/activity/corridor_home_origin/corridor_lakeshore.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_laurel.json": {
+    "file": "_app/immutable/chunks/bRVFyFst.js",
+    "name": "corridor_laurel",
+    "src": "src/data/activity/corridor_home_origin/corridor_laurel.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_little_saigon.json": {
+    "file": "_app/immutable/chunks/5eCFNsb0.js",
+    "name": "corridor_little_saigon",
+    "src": "src/data/activity/corridor_home_origin/corridor_little_saigon.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_montclair.json": {
+    "file": "_app/immutable/chunks/NEXnMwFf.js",
+    "name": "corridor_montclair",
+    "src": "src/data/activity/corridor_home_origin/corridor_montclair.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_northlake.json": {
+    "file": "_app/immutable/chunks/D-EZEinq.js",
+    "name": "corridor_northlake",
+    "src": "src/data/activity/corridor_home_origin/corridor_northlake.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_old_oakland.json": {
+    "file": "_app/immutable/chunks/DVVNqlb1.js",
+    "name": "corridor_old_oakland",
+    "src": "src/data/activity/corridor_home_origin/corridor_old_oakland.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_rockridge.json": {
+    "file": "_app/immutable/chunks/BtzhOwQZ.js",
+    "name": "corridor_rockridge",
+    "src": "src/data/activity/corridor_home_origin/corridor_rockridge.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_temescal_telegraph.json": {
+    "file": "_app/immutable/chunks/Br99eEte.js",
+    "name": "corridor_temescal_telegraph",
+    "src": "src/data/activity/corridor_home_origin/corridor_temescal_telegraph.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin/corridor_uptown_arts_and_entertainment_district.json": {
+    "file": "_app/immutable/chunks/B_yN94fj.js",
+    "name": "corridor_uptown_arts_and_entertainment_district",
+    "src": "src/data/activity/corridor_home_origin/corridor_uptown_arts_and_entertainment_district.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_7th_st_thrives.json": {
+    "file": "_app/immutable/chunks/CqdbNBzd.js",
+    "name": "corridor_7th_st_thrives",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_7th_st_thrives.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_bambd.json": {
+    "file": "_app/immutable/chunks/CwS_wNnI.js",
+    "name": "corridor_bambd",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_bambd.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_chinatown.json": {
+    "file": "_app/immutable/chunks/DFfEwrwM.js",
+    "name": "corridor_chinatown",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_chinatown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_dimond.json": {
+    "file": "_app/immutable/chunks/f6ks-CFw.js",
+    "name": "corridor_dimond",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_dimond.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_downtown.json": {
+    "file": "_app/immutable/chunks/Den3e9E6.js",
+    "name": "corridor_downtown",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_downtown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_elmhurst.json": {
+    "file": "_app/immutable/chunks/Bh9GODf8.js",
+    "name": "corridor_elmhurst",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_elmhurst.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_fruitvale.json": {
+    "file": "_app/immutable/chunks/Yh_pO8nw.js",
+    "name": "corridor_fruitvale",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_fruitvale.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_havencourt.json": {
+    "file": "_app/immutable/chunks/CliFb2wr.js",
+    "name": "corridor_havencourt",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_havencourt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_hegenberger.json": {
+    "file": "_app/immutable/chunks/CTq4yT3f.js",
+    "name": "corridor_hegenberger",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_hegenberger.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_jack_london.json": {
+    "file": "_app/immutable/chunks/dHmqE2FN.js",
+    "name": "corridor_jack_london",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_jack_london.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_koreatown_northgate.json": {
+    "file": "_app/immutable/chunks/DOdO6Dzo.js",
+    "name": "corridor_koreatown_northgate",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_koreatown_northgate.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_lake_merritt.json": {
+    "file": "_app/immutable/chunks/BJn7zIuk.js",
+    "name": "corridor_lake_merritt",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_lake_merritt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_lakeshore.json": {
+    "file": "_app/immutable/chunks/dPVU8Ru6.js",
+    "name": "corridor_lakeshore",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_lakeshore.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_laurel.json": {
+    "file": "_app/immutable/chunks/QhPAP403.js",
+    "name": "corridor_laurel",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_laurel.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_little_saigon.json": {
+    "file": "_app/immutable/chunks/DTvXgwyU.js",
+    "name": "corridor_little_saigon",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_little_saigon.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_montclair.json": {
+    "file": "_app/immutable/chunks/Chluxw7q.js",
+    "name": "corridor_montclair",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_montclair.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_northlake.json": {
+    "file": "_app/immutable/chunks/D4bhVrPr.js",
+    "name": "corridor_northlake",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_northlake.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_old_oakland.json": {
+    "file": "_app/immutable/chunks/D4A8-MSc.js",
+    "name": "corridor_old_oakland",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_old_oakland.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_rockridge.json": {
+    "file": "_app/immutable/chunks/TLqM0Jwm.js",
+    "name": "corridor_rockridge",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_rockridge.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_temescal_telegraph.json": {
+    "file": "_app/immutable/chunks/BEetq4z6.js",
+    "name": "corridor_temescal_telegraph",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_temescal_telegraph.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s1/corridor_uptown_arts_and_entertainment_district.json": {
+    "file": "_app/immutable/chunks/DKM79pCW.js",
+    "name": "corridor_uptown_arts_and_entertainment_district",
+    "src": "src/data/activity/corridor_home_origin_s1/corridor_uptown_arts_and_entertainment_district.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_7th_st_thrives.json": {
+    "file": "_app/immutable/chunks/CUvyv-_B.js",
+    "name": "corridor_7th_st_thrives",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_7th_st_thrives.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_bambd.json": {
+    "file": "_app/immutable/chunks/D9X64Dhj.js",
+    "name": "corridor_bambd",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_bambd.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_chinatown.json": {
+    "file": "_app/immutable/chunks/CmscE11y.js",
+    "name": "corridor_chinatown",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_chinatown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_dimond.json": {
+    "file": "_app/immutable/chunks/C-iroZD-.js",
+    "name": "corridor_dimond",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_dimond.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_downtown.json": {
+    "file": "_app/immutable/chunks/DzUPEyZb.js",
+    "name": "corridor_downtown",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_downtown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_elmhurst.json": {
+    "file": "_app/immutable/chunks/bSqkDOti.js",
+    "name": "corridor_elmhurst",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_elmhurst.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_fruitvale.json": {
+    "file": "_app/immutable/chunks/XOt0koE8.js",
+    "name": "corridor_fruitvale",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_fruitvale.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_havencourt.json": {
+    "file": "_app/immutable/chunks/Dk1N8Hy8.js",
+    "name": "corridor_havencourt",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_havencourt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_hegenberger.json": {
+    "file": "_app/immutable/chunks/BaApAv-b.js",
+    "name": "corridor_hegenberger",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_hegenberger.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_jack_london.json": {
+    "file": "_app/immutable/chunks/DR24PMTu.js",
+    "name": "corridor_jack_london",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_jack_london.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_koreatown_northgate.json": {
+    "file": "_app/immutable/chunks/DOOmszYI.js",
+    "name": "corridor_koreatown_northgate",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_koreatown_northgate.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_lake_merritt.json": {
+    "file": "_app/immutable/chunks/nzwxsqq6.js",
+    "name": "corridor_lake_merritt",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_lake_merritt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_lakeshore.json": {
+    "file": "_app/immutable/chunks/DktJ5nkZ.js",
+    "name": "corridor_lakeshore",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_lakeshore.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_laurel.json": {
+    "file": "_app/immutable/chunks/D1Isf7zV.js",
+    "name": "corridor_laurel",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_laurel.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_little_saigon.json": {
+    "file": "_app/immutable/chunks/CfynZh_q.js",
+    "name": "corridor_little_saigon",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_little_saigon.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_montclair.json": {
+    "file": "_app/immutable/chunks/BXd8xzWN.js",
+    "name": "corridor_montclair",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_montclair.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_northlake.json": {
+    "file": "_app/immutable/chunks/tmEETGXo.js",
+    "name": "corridor_northlake",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_northlake.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_old_oakland.json": {
+    "file": "_app/immutable/chunks/t4JBAHt8.js",
+    "name": "corridor_old_oakland",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_old_oakland.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_rockridge.json": {
+    "file": "_app/immutable/chunks/B0xqTzYk.js",
+    "name": "corridor_rockridge",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_rockridge.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_temescal_telegraph.json": {
+    "file": "_app/immutable/chunks/BmcIUBhe.js",
+    "name": "corridor_temescal_telegraph",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_temescal_telegraph.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_home_origin_s3/corridor_uptown_arts_and_entertainment_district.json": {
+    "file": "_app/immutable/chunks/jQysYHQl.js",
+    "name": "corridor_uptown_arts_and_entertainment_district",
+    "src": "src/data/activity/corridor_home_origin_s3/corridor_uptown_arts_and_entertainment_district.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_meta.json": {
+    "file": "_app/immutable/chunks/Da6IB09P.js",
+    "name": "corridor_meta",
+    "src": "src/data/activity/corridor_meta.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/7th_st_thrives.json": {
+    "file": "_app/immutable/chunks/BT7uH4hh.js",
+    "name": "7th_st_thrives",
+    "src": "src/data/activity/corridor_metrics/7th_st_thrives.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/bambd.json": {
+    "file": "_app/immutable/chunks/BHBS48Bf.js",
+    "name": "bambd",
+    "src": "src/data/activity/corridor_metrics/bambd.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/chinatown.json": {
+    "file": "_app/immutable/chunks/CV4Vk8tO.js",
+    "name": "chinatown",
+    "src": "src/data/activity/corridor_metrics/chinatown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/dimond.json": {
+    "file": "_app/immutable/chunks/C-UcEOhW.js",
+    "name": "dimond",
+    "src": "src/data/activity/corridor_metrics/dimond.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/downtown.json": {
+    "file": "_app/immutable/chunks/BntPQM0l.js",
+    "name": "downtown",
+    "src": "src/data/activity/corridor_metrics/downtown.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/elmhurst.json": {
+    "file": "_app/immutable/chunks/Bmzyb6hM.js",
+    "name": "elmhurst",
+    "src": "src/data/activity/corridor_metrics/elmhurst.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/fruitvale.json": {
+    "file": "_app/immutable/chunks/ChDdhmik.js",
+    "name": "fruitvale",
+    "src": "src/data/activity/corridor_metrics/fruitvale.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/havencourt.json": {
+    "file": "_app/immutable/chunks/CoQUrAnu.js",
+    "name": "havencourt",
+    "src": "src/data/activity/corridor_metrics/havencourt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/hegenberger.json": {
+    "file": "_app/immutable/chunks/CyXM2d8z.js",
+    "name": "hegenberger",
+    "src": "src/data/activity/corridor_metrics/hegenberger.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/jack_london.json": {
+    "file": "_app/immutable/chunks/BHJdW3-k.js",
+    "name": "jack_london",
+    "src": "src/data/activity/corridor_metrics/jack_london.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/koreatown_northgate.json": {
+    "file": "_app/immutable/chunks/PD0w5ois.js",
+    "name": "koreatown_northgate",
+    "src": "src/data/activity/corridor_metrics/koreatown_northgate.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/lake_merritt.json": {
+    "file": "_app/immutable/chunks/FR4GwZgY.js",
+    "name": "lake_merritt",
+    "src": "src/data/activity/corridor_metrics/lake_merritt.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/lakeshore.json": {
+    "file": "_app/immutable/chunks/B1dlftmn.js",
+    "name": "lakeshore",
+    "src": "src/data/activity/corridor_metrics/lakeshore.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/laurel.json": {
+    "file": "_app/immutable/chunks/CK6mBdN9.js",
+    "name": "laurel",
+    "src": "src/data/activity/corridor_metrics/laurel.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/little_saigon.json": {
+    "file": "_app/immutable/chunks/BAxLxD7T.js",
+    "name": "little_saigon",
+    "src": "src/data/activity/corridor_metrics/little_saigon.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/montclair.json": {
+    "file": "_app/immutable/chunks/Cp8UBfkR.js",
+    "name": "montclair",
+    "src": "src/data/activity/corridor_metrics/montclair.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/northlake.json": {
+    "file": "_app/immutable/chunks/BT7CHDde.js",
+    "name": "northlake",
+    "src": "src/data/activity/corridor_metrics/northlake.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/old_oakland.json": {
+    "file": "_app/immutable/chunks/BvqaIPGF.js",
+    "name": "old_oakland",
+    "src": "src/data/activity/corridor_metrics/old_oakland.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/rockridge.json": {
+    "file": "_app/immutable/chunks/nRvphRiG.js",
+    "name": "rockridge",
+    "src": "src/data/activity/corridor_metrics/rockridge.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/temescal_telegraph.json": {
+    "file": "_app/immutable/chunks/CM41uMgn.js",
+    "name": "temescal_telegraph",
+    "src": "src/data/activity/corridor_metrics/temescal_telegraph.json",
+    "isDynamicEntry": true
+  },
+  "src/data/activity/corridor_metrics/uptown_arts_and_entertainment_district.json": {
+    "file": "_app/immutable/chunks/BhOLtVKP.js",
+    "name": "uptown_arts_and_entertainment_district",
+    "src": "src/data/activity/corridor_metrics/uptown_arts_and_entertainment_district.json",
+    "isDynamicEntry": true
   }
 }

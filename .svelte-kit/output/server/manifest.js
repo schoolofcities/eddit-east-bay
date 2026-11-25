@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "eddit-east-bay/_app",
-	assets: new Set([".DS_Store",".nojekyll","business_statistics/broad_sector_distribution.csv","business_statistics/employee_range_distribution.csv","business_statistics/own_or_lease_da_distribution.csv","business_statistics/sales_range_distribution.csv","examples/amroth-iso-bldg.png","examples/amroth-iso-lot.png","examples/buildings-2025.pmtiles","examples/map-asthma-360.svg","examples/map-heat-360.svg","examples/map-tree-360.svg","examples/map-tree-redline-360.svg","examples/map-tree-redline-720.svg","examples/wilson-iso-bldg.svg","examples/wilson-iso-lot.svg","favicon.svg"]),
+	assets: new Set([".nojekyll","business_statistics/broad_sector_distribution.csv","business_statistics/employee_range_distribution.csv","business_statistics/own_or_lease_da_distribution.csv","business_statistics/sales_range_distribution.csv","examples/amroth-iso-bldg.png","examples/amroth-iso-lot.png","examples/buildings-2025.pmtiles","examples/map-asthma-360.svg","examples/map-heat-360.svg","examples/map-tree-360.svg","examples/map-tree-redline-360.svg","examples/map-tree-redline-720.svg","examples/wilson-iso-bldg.svg","examples/wilson-iso-lot.svg","favicon.svg"]),
 	mimeTypes: {".csv":"text/csv",".png":"image/png",".svg":"image/svg+xml"},
 	_: {
-		client: {start:"_app/immutable/entry/start.DGOExqGT.js",app:"_app/immutable/entry/app.DPNzlWBv.js",imports:["_app/immutable/entry/start.DGOExqGT.js","_app/immutable/chunks/Dg0jWt2U.js","_app/immutable/chunks/DLzypJ_d.js","_app/immutable/chunks/Io8RqZ5S.js","_app/immutable/chunks/Cmrpo6if.js","_app/immutable/entry/app.DPNzlWBv.js","_app/immutable/chunks/Io8RqZ5S.js","_app/immutable/chunks/DLzypJ_d.js","_app/immutable/chunks/NZTpNUN0.js","_app/immutable/chunks/CFrxUXj8.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.Ci72mIC8.js",app:"_app/immutable/entry/app.DVg_qosP.js",imports:["_app/immutable/entry/start.Ci72mIC8.js","_app/immutable/chunks/DVdFOwWe.js","_app/immutable/chunks/ncTuHAue.js","_app/immutable/chunks/CoPL-fNc.js","_app/immutable/chunks/FuETYIb1.js","_app/immutable/entry/app.DVg_qosP.js","_app/immutable/chunks/D9Z9MdNV.js","_app/immutable/chunks/CoPL-fNc.js","_app/immutable/chunks/ncTuHAue.js","_app/immutable/chunks/NZTpNUN0.js","_app/immutable/chunks/Bew7WIJr.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js'))
