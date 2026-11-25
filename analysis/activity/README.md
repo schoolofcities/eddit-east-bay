@@ -26,19 +26,20 @@ Both have the same table layout (monthly or half-yearly gzipped CSVs, see the me
 | `02_bg_crosswalk_and_districts.ipynb` | `processed/home_geography`, TIGER2019 block groups (auto-downloaded to `data/geo/tiger2019_bg/`), Alameda 2020 block groups, council districts, corridor polygons | `processed/bg_crosswalk_2010_to_2020.csv.gz`, `bg_district_weights.csv`, `corridor_districts.csv` |
 | `03_corridor_home_origin_by_bg.ipynb` | `processed/corridor_homes`, crosswalks | `src/data/activity/corridor_home_origin{,_s1,_s3}/corridor_<id>.json` (21 files each), `src/data/activity/legend_breaks.json`, `processed/corridor_bg_origin*.csv.gz`, `corridor_district_origin*.csv` |
 | `04_cross_segment_comparability.ipynb` | `processed/*` | `processed/comparability.json` (which metrics may be compared across the provider break, and the uncertainty band) |
-| `05_corridor_metrics.ipynb` | `processed/*`, `comparability.json` | `src/data/activity/corridor_metrics.json`, `corridor_index.json` |
+| `05_corridor_metrics.ipynb` | `processed/*`, `comparability.json` | `src/data/activity/corridor_meta.json`, `corridor_metrics/<id>.json` (21 files), `corridor_index.json`; plus `processed/corridor_metrics_all.json` (one-file copy for the explore notebooks, not shipped) |
 
 ### What ends up in `src/data/activity/`
 
 | File | Size | Loaded | Contents |
 |---|---|---|---|
 | `corridor_index.json` | ~10 KB | on page load | one entry per corridor: `id`, `name`, `map_name` (exact `corridor_name` in `OAK_CORRIDORS.geo.json`, `null` for Hegenberger which is not on the map yet), centroid, primary council district, origin file names for the three variants |
-| `corridor_metrics.json` | ~260 KB | on page load | `meta` (months, half-years, provider segments, bands, **comparability rules**) + one record per corridor (see below) |
+| `corridor_meta.json` | ~3 KB | once, when a corridor profile first opens | shared axes (months, half-years, provider segments, bands), the **comparability rules**, and the "typical corridor" medians used as reference markers |
+| `corridor_metrics/<id>.json` | ~12 KB each | lazily, for the selected corridor only | that corridor's record (see below) |
 | `corridor_home_origin/corridor_<id>.json` | ~35 KB each | lazily, on corridor select | `{ "<BG GEOID>": { "all": %, "evening": %, "nine-five": %, "weekdays": %, "weekends": % } }`, share of the corridor's visitors living in each Oakland block group, **S1 and S3 equal-weighted** (default). Keys match the Activity layers in `LayerConfig.js` and the map's `promoteId: "GEOID"`, so it can go straight into `map.setFeatureState` |
 | `corridor_home_origin_s1/`, `_s3/` | same | lazily | the same files for each provider segment alone (2019-22 and 2023-25), so the UI can offer "2019-22 / 2023-25 / all years" |
 | `legend_breaks.json` | <1 KB | at build/config time | quintile breaks per period for `pooled`, `S1` and `S3` (nearly identical; one set is enough) |
 
-`corridor_metrics.json` per corridor: `monthly` (absolute devices/visits, **S1 and S3 as separate series**), `index` (each segment indexed to its own first 12 months = 100), `share_of_total` (% of the 21-corridor total, comparable across the break within `meta.comparability.share_band_factor`), `repeat_pct` (per half-year), `segments.S1` / `segments.S3` (summary card, timing splits, origin by area, council-district origin, travel distance, repeat %, and `peer` = rank among the 21 corridors and gap to the median corridor), `pooled.district_origin` (same basis as the map files) and `peer_change` (rank places moved S1 -> S3, only for metrics allowed across the break).
+Each `corridor_metrics/<id>.json` holds: `monthly` (absolute devices/visits, **S1 and S3 as separate series**), `index` (each segment indexed to its own first 12 months = 100), `share_of_total` (% of the 21-corridor total, comparable across the break within `meta.comparability.share_band_factor`), `repeat_pct` (per half-year), `segments.S1` / `segments.S3` (summary card, timing splits, origin by area, council-district origin, travel distance, repeat %, and `peer` = rank among the 21 corridors and gap to the median corridor), `pooled.district_origin` (same basis as the map files) and `peer_change` (rank places moved S1 -> S3, only for metrics allowed across the break).
 
 ## The provider break: what is and isn't comparable
 
@@ -62,3 +63,20 @@ The data come from three providers: **S1** Jan 2019-Dec 2022, **S2** Jan-Jun 202
 
 - `06_explore_corridor_profiles.ipynb`: scale, loyalty, timing, origin, travel distance and catchment shape for the 21 corridors (S3 / 2025); clustered profile heatmap and corridor types; auto-generated rankings; change in peer position since S1.
 - `07_explore_origins_and_trends.ipynb`: COVID shock and recovery (within S1), who gained and lost share, seasonality, origin trends within each segment, catchment maps and overlap, demographics of origin block groups, district over-index matrix.
+
+## Front end
+
+The map page (`src/routes/map/`) reads these files through `src/lib/activity/`:
+
+| File | Role |
+|---|---|
+| `activityData.js` | Lazy loaders (`loadMeta`, `loadCorridorMetrics`, `loadOrigin`), the corridor lookup by the map's `corridor_name`, colours and formatters. Vite splits every data file into its own chunk, so nothing loads until it is needed (about 6 KB gzipped per corridor profile and per map layer) |
+| `ActivityProfile.svelte` | The panel section: data-provider note, highlights, and the six charts (monthly activity, repeat visitors, weekday vs weekend, daytime vs evening, council-district origin, travel distance) |
+| `LineChart.svelte`, `StackedBar.svelte`, `DistrictBars.svelte` | Small hand-rolled SVG/CSS charts (no chart library) |
+
+How the pieces behave:
+
+- The five Activity layer buttons (All / Evenings / Daytime / Weekdays / Weekends) paint the selected corridor's block-group shares on the map and also set the time slice shown in the monthly, district and travel-distance charts.
+- A **Time period** switch (2023-25 / 2019-22 / Both averaged) sets which provider's data the map and the snapshot charts use. "Both averaged" uses the equal-weight blend on the map and shows the two periods side by side in the charts. The two time-series charts always show both providers as separate lines with a gap for Jan-Jun 2023.
+- Transparency is built into the UI: an "About this data" note, a per-chart chip saying whether a metric may be compared across the provider break or only within a period (driven by `meta.comparability.rules`), "typical corridor" markers computed inside each provider, a grey uncertainty band on the share-of-total view, and a small-sample warning for corridors with under 1,000 estimated devices a month.
+- Hegenberger has activity data but is not in `OAK_CORRIDORS.geo.json`, so it cannot be selected on the map yet (`in_map: false` in the index).

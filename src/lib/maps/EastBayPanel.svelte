@@ -10,6 +10,8 @@
 	import BusinessBarChart from "./BusinessBarChart.svelte";
 	import CatchmentQuintile from "./CatchmentQuintile.svelte";
 	import { MAP_TOGGLE_IDS } from "./EastBayMap.svelte";
+	import ActivityProfile from "$lib/activity/ActivityProfile.svelte";
+	import { WINDOWS, loadCorridorMetrics, getActivityEntry, fmtInt } from "$lib/activity/activityData.js";
 
 	// Per-dataset threshold (%) below which categories are grouped into
 	// "Other" in the stacked bar. Keys are dataset ids from BusinessData.js.
@@ -56,6 +58,7 @@
 	let {
 		selectedCorridorId = $bindable('null'),
 		layerState = $bindable({}),
+		activityWindow = $bindable("S3"), // S3 | S1 | both: data period for the Activity layers and charts
 		corridors = CORRIDORS,
 	} = $props();
 
@@ -64,6 +67,31 @@
 	);
 
 	const catchmentFeature = $derived(getCatchmentFeature(selectedCorridorId));
+
+	// The Activity layer chosen on the map also sets the time slice (all, evenings,
+	// daytime, weekdays, weekends) shown in the activity charts below.
+	const activePeriod = $derived(
+		ACTIVITY_GROUP?.items.find((i) => i.id === layerState.activity?.activeId)?.key ?? "all",
+	);
+	const activeWindow = $derived(WINDOWS.find((w) => w.id === activityWindow) ?? WINDOWS[0]);
+
+	// Headline device estimate for the profile card: one corridor's small metrics file,
+	// shared (cached) with the activity charts below. Never blocks first paint.
+	let deviceStat = $state(null);
+	$effect(() => {
+		const entry = getActivityEntry(selectedCorridorId);
+		deviceStat = null;
+		if (!entry) return;
+		let cancelled = false;
+		loadCorridorMetrics(entry.id)
+			.then((c) => {
+				if (!cancelled) deviceStat = c?.segments.S3.summary.devices_per_month ?? null;
+			})
+			.catch(() => {});
+		return () => {
+			cancelled = true;
+		};
+	});
 
 	// Quintile cut points (20th, 40th, 60th, 80th percentile) of each
 	// demography field across every corridor's catchment area, so each value
@@ -192,7 +220,7 @@
 	}
 </script>
 
-{#snippet breaksLegend(item)}
+{#snippet breaksLegend(item, suffix = "")}
 	<svg class="legend" width="100%" height="40">
 		{#each item.colors as color, i}
 			<rect
@@ -215,11 +243,11 @@
 				text-anchor="middle"
 			>
 				{#if i === 0}
-					&lt;{value.toLocaleString()}
+					&lt;{value.toLocaleString()}{suffix}
 				{:else if i === item.breaks.length - 1}
-					&gt;{value.toLocaleString()}
+					&gt;{value.toLocaleString()}{suffix}
 				{:else}
-					{value.toLocaleString()}
+					{value.toLocaleString()}{suffix}
 				{/if}
 			</text>
 		{/each}
@@ -279,8 +307,12 @@
 
 			<div class="stat-grid">
 				<div class="stat-card">
-					<span class="stat-label">Monthly Foot Traffic</span>
-					<span class="stat-value placeholder">—</span>
+					<span class="stat-label">Est. Devices / Month (2025)</span>
+					{#if deviceStat !== null}
+						<span class="stat-value">≈ {fmtInt(deviceStat)}</span>
+					{:else}
+						<span class="stat-value placeholder">—</span>
+					{/if}
 				</div>
 				<div class="stat-card">
 					<span class="stat-label">Catchment Radius</span>
@@ -312,16 +344,43 @@
 						{/each}
 					</div>
 
+					<div class="window-switch">
+						<span class="layer-group-label">Time period</span>
+						<div class="activity-grid" role="group" aria-label="Time period for the map layer and charts">
+							{#each WINDOWS as w (w.id)}
+								<button
+									type="button"
+									class="activity-btn"
+									class:active={activityWindow === w.id}
+									onclick={() => (activityWindow = w.id)}
+								>
+									{w.label}
+								</button>
+							{/each}
+						</div>
+						<p class="section-desc window-note">
+							{activeWindow.long}.
+							{#if activityWindow !== "both"}
+								The 2019–22 and 2023–25 data come from different providers, so they are shown
+								separately; Jan–Jun 2023 is left out.
+							{:else}
+								Averages the two periods with equal weight on the map; the charts show each period
+								side by side.
+							{/if}
+						</p>
+					</div>
+
 					{#if layerState.activity?.activeId}
 						{@const selectedActivityItem = ACTIVITY_GROUP.items.find(
 							(item) => item.id === layerState.activity.activeId,
 						)}
 						{#if selectedActivityItem}
-							{@render breaksLegend(selectedActivityItem)}
+							{@render breaksLegend(selectedActivityItem, "%")}
 							<p class="section-desc legend-caption">
-								% share of the corridor's estimated home-origin
-								visitors, by census block group (quintiles). Gray
-								areas had no estimated visitors.
+								Share of the corridor's estimated visitors who live in each census
+								block group ({activeWindow.label}; quintiles of block groups with
+								any visitors). Gray areas had no estimated visitors. Estimates, not
+								counts of people.
 							</p>
 						{/if}
 					{/if}
@@ -331,6 +390,26 @@
 			<p class="empty-state">
 				Select a corridor above or click on the map to view its
 				activity and demographic profile.
+			</p>
+		{/if}
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- ── Activity Profile ─────────────────────────────────────────────── -->
+	<section class="panel-section">
+		<h2 class="section-heading">Activity Profile</h2>
+
+		{#if selectedCorridor}
+			<ActivityProfile
+				selectedCorridorId={selectedCorridorId}
+				period={activePeriod}
+				windowId={activityWindow}
+			/>
+		{:else}
+			<p class="empty-state">
+				Select a corridor above or click on the map to view its activity
+				profile.
 			</p>
 		{/if}
 	</section>
@@ -770,6 +849,16 @@
 	.legend-caption {
 		margin: 4px 0 0;
 	}
+
+	.window-switch {
+		margin-top: 12px;
+	}
+
+	.window-note {
+		margin: 5px 0 0;
+		font-size: 0.68rem;
+	}
+
 
 	/* ── Corridor Description ──────────────────────────────────────────── */
 

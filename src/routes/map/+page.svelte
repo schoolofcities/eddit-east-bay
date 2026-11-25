@@ -16,6 +16,8 @@
     let map = $state(null);
     let selectedCorridorId = $state(null);
     let layerState = $state(makeInitialLayerState());
+    // Which data period the Activity layers and charts show: S3 (2023–25), S1 (2019–22) or both averaged
+    let activityWindow = $state("S3");
 
     // Select a random corridor once the page is running in the browser.
     onMount(() => {
@@ -46,11 +48,11 @@
 
 <div class="layout">
     <div class="panel-wrap">
-        <EastBayPanel bind:selectedCorridorId bind:layerState />
+        <EastBayPanel bind:selectedCorridorId bind:layerState bind:activityWindow />
     </div>
 
     <div class="map-wrap">
-        <EastBayMap bind:map bind:selectedCorridorId {layerState} />
+        <EastBayMap bind:map bind:selectedCorridorId {layerState} {activityWindow} />
     </div>
 </div>
 

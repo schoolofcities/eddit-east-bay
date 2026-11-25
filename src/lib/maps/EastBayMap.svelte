@@ -28,6 +28,7 @@
 	import oaklandCensus from "../../data/OAK_BG.geo.json";
 
 	import basemapLayers from "$lib/maps/neutral-grey.json";
+	import { loadOrigin, originVariant } from "$lib/activity/activityData.js";
 
 	const OAK_GREEN = "#2C683D";
 
@@ -49,6 +50,7 @@
 		map = $bindable(null),
 		selectedCorridorId = $bindable(null),
 		layerState = $bindable({}),
+		activityWindow = "S3", // S3 | S1 | both: which data period the Activity layers show
 	} = $props();
 
 	// Each on-map toggle, paired with the layer group it belongs to.
@@ -127,7 +129,7 @@
 			mapLoaded = true;
 			addBoundaryMask();
 			addDemographyLayers();
-			// addActivityLayers();
+			addActivityLayers();
 			addNeighbourhoods();
 			addCouncilDistricts();
 			// addBids();
@@ -505,14 +507,11 @@
 		});
 	}
 
-	/* Commented out — this block depends on per-corridor activity data, which
-	   isn't wired in yet. Re-enable once that data source exists.
-
-	// Activity layers share the same census polygons as demography, but the
-	// data behind them is per-corridor and fetched at runtime (see
-	// applyActivityFeatureState), so it's attached via feature-state keyed by
-	// block group id rather than baked into the GeoJSON's properties like
-	// demography.
+	// Activity layers share the census polygons used by demography, but the data
+	// behind them depends on the selected corridor (and the chosen data period), so
+	// it is attached through feature-state, keyed by block group GEOID, instead of
+	// being baked into the GeoJSON. Each corridor's file (~35 KB) is loaded only
+	// when an Activity layer is switched on (see loadOrigin).
 	function activityFillColor(item) {
 		const stepColor = [
 			"step",
@@ -521,9 +520,8 @@
 			...item.breaks.flatMap((b, i) => [b, item.colors[i + 1]]),
 		];
 
-		// No fetched value yet, or a genuine 0% share, both render as the
-		// same neutral "no visitors from here" gray demography uses for
-		// missing data.
+		// No value for this block group, or a genuine 0% share: both render as the
+		// neutral "no visitors from here" gray that demography uses for missing data.
 		return [
 			"case",
 			[
@@ -554,105 +552,28 @@
 		}
 	}
 
-	// Per-corridor home-origin activity, fetched lazily and cached by
-	// corridor id. Files are pretty-printed JSON under
-	// static/corridor_home_origin/ — small enough that there's no need to
-	// prefetch every corridor up front.
-	const activityDataCache = new Map();
+	// Each call gets a ticket; a slow response for an old selection is ignored
+	// if the corridor, window or layer has changed in the meantime.
+	let activityTicket = 0;
 
-	// The five feature-state keys used by the Activity group in
-	// LayerConfig.js — kept in sync manually since the placeholder generator
-	// below needs to know them ahead of any real per-corridor file existing.
-	const ACTIVITY_KEYS = [
-		"all",
-		"evening",
-		"nine-five",
-		"weekdays",
-		"weekends",
-	];
-
-	// Small string hash → deterministic 0-1 float. Not cryptographic, just
-	// needs to be stable across reloads so a given corridor+block-group pair
-	// always renders the same placeholder value instead of flickering.
-	function seededRandom(seed) {
-		let h = 0;
-		for (let i = 0; i < seed.length; i++) {
-			h = (Math.imul(31, h) + seed.charCodeAt(i)) | 0;
-		}
-		h = Math.imul(h ^ (h >>> 15), h | 1);
-		h ^= h + Math.imul(h ^ (h >>> 7), h | 61);
-		return ((h ^ (h >>> 14)) >>> 0) / 4294967296;
-	}
-
-	// PLACEHOLDER DATA — remove once real corridor_home_origin/*.json files
-	// are wired in. Generates a plausible-looking, corridor-specific spread
-	// of activity values (skewed toward low percentages with a long tail,
-	// roughly matching the shape the real quintile breaks in LayerConfig.js
-	// assume) for every block group already loaded in oaklandCensus, so the
-	// Activity layers render something meaningful in dev/demo without real
-	// visitation data.
-	function generatePlaceholderActivityData(corridorId) {
-		const data = {};
-		for (const feature of oaklandCensus.features) {
-			const bgId =
-				feature.properties?.GEOID ?? feature.id ?? feature.properties?.fid;
-			if (bgId == null) continue;
-
-			const values = {};
-			for (const key of ACTIVITY_KEYS) {
-				const r = seededRandom(`${corridorId}:${bgId}:${key}`);
-				// ~15% chance of "no estimated visitors" (renders as gray),
-				// otherwise an exponential-ish skew toward small shares with
-				// occasional higher values, roughly on the same scale as the
-				// real breaks (0 – ~1.0).
-				values[key] = r < 0.15 ? 0 : Number((-Math.log(1 - r) * 0.25).toFixed(4));
-			}
-			data[bgId] = values;
-		}
-		return data;
-	}
-
-	async function loadCorridorActivityData(corridorId) {
-		if (activityDataCache.has(corridorId))
-			return activityDataCache.get(corridorId);
-
-		let data = null;
-		try {
-			const response = await fetch(
-				`corridor_home_origin/corridor_${corridorId}.json`,
-			);
-			if (response.ok) data = await response.json();
-		} catch {
-			data = null;
-		}
-
-		// Fall back to generated placeholder data so the layers aren't just
-		// blank while real per-corridor files are still being produced.
-		if (!data) data = generatePlaceholderActivityData(corridorId);
-
-		activityDataCache.set(corridorId, data);
-		return data;
-	}
-
-	// Clears any previously-set activity feature-state, then (if a corridor is
-	// selected) fetches its data and re-attaches it per block group. Runs on
-	// every corridor change regardless of whether an activity layer is
-	// currently visible, so the data's already in place by the time someone
-	// toggles one on.
-	async function applyActivityFeatureState(corridorId) {
+	async function applyActivityFeatureState(corridorId, windowId, layerActive) {
 		if (!map || !map.getSource("oakland-census")) return;
+		const ticket = ++activityTicket;
+
+		if (!corridorId || !layerActive) {
+			map.removeFeatureState({ source: "oakland-census" });
+			return;
+		}
+
+		const data = await loadOrigin(corridorId, originVariant(windowId));
+		if (ticket !== activityTicket) return;
 
 		map.removeFeatureState({ source: "oakland-census" });
-		if (!corridorId) return;
-
-		const data = await loadCorridorActivityData(corridorId);
 		if (!data) return;
-
 		for (const [bgId, values] of Object.entries(data)) {
 			map.setFeatureState({ source: "oakland-census", id: bgId }, values);
 		}
 	}
-	*/
 
 	// Neighborhood labels (../../data/OAK_neighborhood_labels.geo.json). Always
 	// on as a base reference layer — no outline, just faint name labels that
@@ -1065,16 +986,17 @@
 		}
 	});
 
-	// Refreshes the Activity layers' feature-state whenever the selected
-	// corridor changes, whether or not an activity layer is currently
-	// visible — so the data's already in place if/when one gets toggled on.
-	/* Commented out — calls applyActivityFeatureState, which is commented
-	   out above along with the rest of the activity/demography block.
+	// Refreshes the Activity layers' feature-state whenever the selected corridor
+	// or data period changes, or an Activity layer is switched on or off. Nothing
+	// is fetched while no Activity layer is showing.
 	$effect(() => {
 		if (!mapLoaded) return;
-		applyActivityFeatureState(selectedCorridorId);
+		applyActivityFeatureState(
+			selectedCorridorId,
+			activityWindow,
+			Boolean(layerState.activity?.activeId),
+		);
 	});
-	*/
 
 	$effect(() => {
 		for (const group of LAYER_GROUPS) {

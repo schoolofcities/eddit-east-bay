@@ -1,5 +1,6 @@
 import corridorBoundaries from "../../data/OAK_CORRIDORS.geo.json";
 import catchmentBoundaries from "../../data/OAK_catchment_area.geo.json";
+import legendBreaks from "../../data/activity/legend_breaks.json";
 
 
 const COLOURS = [
@@ -51,11 +52,14 @@ export const LAYER_GROUPS = [
 		exclusive: true,
 		ui: "radio-toggles",
 		items: [
-			{ id: "activity-all", label: "All", key: "all", breaks: [0.042, 0.106, 0.221, 0.565], colors: COLOURS },
-			{ id: "activity-evenings", label: "Evenings (5-11PM)", key: "evening", breaks: [0.044, 0.123, 0.293, 0.82], colors: COLOURS },
-			{ id: "activity-daytime", label: "Daytime (9AM-5PM)", key: "nine-five", breaks: [0.052, 0.146, 0.333, 0.938], colors: COLOURS },
-			{ id: "activity-weekdays", label: "Weekdays", key: "weekdays", breaks: [0.043, 0.11, 0.235, 0.638], colors: COLOURS },
-			{ id: "activity-weekends", label: "Weekends", key: "weekends", breaks: [0.051, 0.145, 0.33, 0.914], colors: COLOURS },
+			// Quintile breaks (% share of the corridor's visitors per block group), from
+			// analysis/activity/03_corridor_home_origin_by_bg.ipynb. The same breaks
+			// serve every time window (they differ by <0.01 between windows).
+			{ id: "activity-all", label: "All", key: "all", breaks: legendBreaks.pooled.all, colors: COLOURS },
+			{ id: "activity-evenings", label: "Evenings (5-11PM)", key: "evening", breaks: legendBreaks.pooled.evening, colors: COLOURS },
+			{ id: "activity-daytime", label: "Daytime (9AM-5PM)", key: "nine-five", breaks: legendBreaks.pooled["nine-five"], colors: COLOURS },
+			{ id: "activity-weekdays", label: "Weekdays", key: "weekdays", breaks: legendBreaks.pooled.weekdays, colors: COLOURS },
+			{ id: "activity-weekends", label: "Weekends", key: "weekends", breaks: legendBreaks.pooled.weekends, colors: COLOURS },
 		],
 	},
 	{
